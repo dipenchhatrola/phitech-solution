@@ -20,8 +20,7 @@ export default function Hero() {
     const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % 3);
     const prevSlide = () => setCurrentSlide((prev) => (prev - 1 + 3) % 3);
 
-    // Helper component for Hexagons
-    const HexBorder = 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)';
+    // Removed HexBorder to pass CI build unused-vars
 
     return (
         <section className="relative h-[650px] lg:h-[750px] overflow-hidden bg-slate-100 flex items-center justify-center">
