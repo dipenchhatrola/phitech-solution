@@ -122,9 +122,9 @@ export default function Contact() {
                            <div className="flex flex-col items-center justify-center mr-1">
                               <img src="https://www.gstatic.com/recaptcha/api2/logo_48.png" className="w-7 h-7" alt="reCAPTCHA" />
                               <div className="text-[9px] text-[#555] font-sans flex mt-[1px] space-x-[2px]">
-                                 <a href="#" className="hover:underline">Privacy</a>
+                                 <span className="hover:underline cursor-pointer">Privacy</span>
                                  <span>-</span>
-                                 <a href="#" className="hover:underline">Terms</a>
+                                 <span className="hover:underline cursor-pointer">Terms</span>
                               </div>
                            </div>
                         </div>
