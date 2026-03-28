@@ -16,7 +16,7 @@ const itemVariants = {
 
 export default function Mould() {
    return (
-      <section className="py-20 bg-white">
+      <section className="py-12 md:py-20 bg-white">
          <div className="container-custom">
             <motion.div 
                initial={{ opacity: 0, scale: 0.95 }}
