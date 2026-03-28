@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 
 export default function Contact() {
    return (
-      <section className="py-24 bg-[#f4f6f8] relative overflow-hidden">
+      <section className="py-12 md:py-24 bg-[#f4f6f8] relative overflow-hidden">
          {/* Very faint map-like dotted background representation */}
          <div className="absolute top-1/2 right-[10%] -translate-y-1/2 w-[600px] h-[600px] bg-[radial-gradient(#e2e8f0_2px,transparent_2px)] [background-size:16px_16px] opacity-50 z-0 rounded-full" style={{ maskImage: 'radial-gradient(circle, black 40%, transparent 70%)', WebkitMaskImage: 'radial-gradient(circle, black 40%, transparent 70%)' }}></div>
          
@@ -114,7 +114,7 @@ export default function Contact() {
                      
                      <div className="flex flex-col space-y-4 pt-1">
                         {/* reCAPTCHA style box */}
-                        <div className="flex items-center justify-between bg-[#f9f9f9] border border-[#d3d3d3] rounded-[3px] p-[6px] pl-3 w-[270px]">
+                        <div className="flex items-center justify-between bg-[#f9f9f9] border border-[#d3d3d3] rounded-[3px] p-[6px] pl-3 w-full sm:w-[270px]">
                            <div className="flex items-center">
                               <div className="w-[26px] h-[26px] bg-[#fff] border-[1.5px] border-[#c1c1c1] rounded-sm mr-2 shadow-inner cursor-pointer hover:border-[#b2b2b2] flex items-center justify-center"></div>
                               <span className="text-[13.5px] text-[#4d4d4d] font-sans">I'm not a robot</span>
