@@ -16,7 +16,7 @@ const itemVariants = {
 
 export default function Products() {
    return (
-      <section className="py-20 bg-slate-50">
+      <section className="py-12 md:py-20 bg-slate-50">
          <div className="container-custom">
             <motion.div 
                initial={{ opacity: 0, y: -20 }}
