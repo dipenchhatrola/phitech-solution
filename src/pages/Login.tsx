@@ -1,22 +1,26 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import api from "../utils/api";
 
 export default function Login() {
   const [code, setCode] = useState("");
+  const [mobile, setMobile] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const handleLogin = () => {
-    if (code.trim() === "") {
-      setError("Please enter a client code");
+  const handleLogin = async () => {
+    if (code.trim() === "" || mobile.trim() === "") {
+      setError("Please enter client code and mobile number");
       return;
     }
     
-    if (code === "141" || code === "142" || code === "143") {
+    try {
+      const response = await api.post("/auth/login", { clientId: code, mobile });
+      localStorage.setItem("clientToken", response.data.token);
       localStorage.setItem("clientCode", code);
       navigate("/dashboard");
-    } else {
-      setError("Invalid client code");
+    } catch (err: any) {
+      setError(err.response?.data?.message || "Invalid credentials");
     }
   };
 
@@ -29,17 +33,33 @@ export default function Login() {
         </div>
         
         <div className="p-8">
-          <div className="mb-6">
+          <div className="mb-4">
             <label className="block text-gray-700 text-sm font-semibold mb-2">
               Client Code
             </label>
             <input
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               type="text"
-              placeholder="Enter your client code (e.g., 141)"
+              placeholder="Enter your client code (e.g., C141)"
               value={code}
               onChange={(e) => {
                 setCode(e.target.value);
+                setError("");
+              }}
+            />
+          </div>
+          
+          <div className="mb-6">
+            <label className="block text-gray-700 text-sm font-semibold mb-2">
+              Mobile Number (Password)
+            </label>
+            <input
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              type="password"
+              placeholder="Enter your registered mobile"
+              value={mobile}
+              onChange={(e) => {
+                setMobile(e.target.value);
                 setError("");
               }}
               onKeyPress={(e) => e.key === 'Enter' && handleLogin()}

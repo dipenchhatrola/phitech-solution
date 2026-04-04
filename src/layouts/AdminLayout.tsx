@@ -50,6 +50,18 @@ export default function AdminLayout() {
             >
               Users
             </NavLink>
+            <NavLink
+              to="/admin/products"
+              className={({ isActive }) =>
+                `${navBase} ${
+                  isActive
+                    ? "bg-slate-800 text-white"
+                    : "text-slate-300 hover:bg-slate-800/60 hover:text-white"
+                }`
+              }
+            >
+              Products
+            </NavLink>
           </nav>
 
           <div className="px-3 pb-4">

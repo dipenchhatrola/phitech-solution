@@ -14,6 +14,7 @@ import Dashboard from "./pages/Dashboard";
 import AdminLogin from "./pages/admin/AdminLogin";
 import AdminMouldStatus from "./pages/admin/AdminMouldStatus";
 import AdminUsers from "./pages/admin/AdminUsers";
+import AdminProducts from "./pages/admin/AdminProducts";
 import './App.css';
 
 function App() {
@@ -43,6 +44,7 @@ function App() {
         >
           <Route index element={<AdminMouldStatus />} />
           <Route path="users" element={<AdminUsers />} />
+          <Route path="products" element={<AdminProducts />} />
         </Route>
       </Routes>
     </BrowserRouter>

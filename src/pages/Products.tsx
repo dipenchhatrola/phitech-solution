@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
+import { Modal, Image } from 'antd';
+import api from '../utils/api';
 
 const containerVariants = {
    hidden: { opacity: 0 },
@@ -15,6 +17,27 @@ const itemVariants = {
 };
 
 export default function Products() {
+   const [products, setProducts] = useState<any[]>([]);
+   const [activeProduct, setActiveProduct] = useState<any>(null);
+   const [isModalVisible, setIsModalVisible] = useState(false);
+
+   useEffect(() => {
+     const fetchProducts = async () => {
+       try {
+         const res = await api.get('/products');
+         // Only show products where isPublic is explicitly true or missing (for retro-compatibility)
+         setProducts(res.data.filter((p: any) => p.isPublic !== false));
+       } catch (err) {
+         console.error('Failed to load products');
+       }
+     };
+     fetchProducts();
+   }, []);
+
+   const getFullUrl = (url: string) => {
+     return (process.env.REACT_APP_BACKEND_URL || 'http://localhost:5001') + url;
+   };
+
    return (
       <section className="py-12 md:py-20 bg-slate-50">
          <div className="container-custom">
@@ -34,31 +57,70 @@ export default function Products() {
             <motion.div 
                variants={containerVariants}
                initial="hidden"
-               whileInView="visible"
-               viewport={{ once: true, margin: "-100px" }}
-               className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto"
+               animate="visible"
+               className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto"
             >
-               <motion.div variants={itemVariants} className="card group overflow-hidden">
-                  <div className="h-64 bg-slate-200 flex items-center justify-center relative overflow-hidden">
-                     <span className="text-slate-400 z-10 transition-transform group-hover:scale-105 duration-500">[Mould Image]</span>
-                  </div>
-                  <div className="p-6 flex justify-between items-center bg-white">
-                     <h4 className="text-xl font-bold text-slate-800">Mould</h4>
-                     <div className="w-8 h-8 rounded-full bg-brand-600 text-white flex items-center justify-center transform group-hover:translate-x-2 transition-transform shadow-md">→</div>
-                  </div>
-               </motion.div>
-
-               <motion.div variants={itemVariants} className="card group overflow-hidden">
-                  <div className="h-64 bg-slate-200 flex items-center justify-center relative overflow-hidden">
-                     <span className="text-slate-400 z-10 transition-transform group-hover:scale-105 duration-500">[Moulded Article Image]</span>
-                  </div>
-                  <div className="p-6 flex justify-between items-center bg-white">
-                     <h4 className="text-xl font-bold text-slate-800">Moulded Article</h4>
-                     <div className="w-8 h-8 rounded-full bg-brand-600 text-white flex items-center justify-center transform group-hover:translate-x-2 transition-transform shadow-md">→</div>
-                  </div>
-               </motion.div>
+               {products.length > 0 ? products.map((product) => (
+                 <motion.div 
+                    key={product._id} 
+                    variants={itemVariants} 
+                    className="card group overflow-hidden bg-white shadow-md rounded-xl cursor-pointer"
+                    onClick={() => { setActiveProduct(product); setIsModalVisible(true); }}
+                 >
+                    <div className="h-64 bg-slate-200 flex items-center justify-center relative overflow-hidden">
+                       {product.photos && product.photos.length > 0 ? (
+                         <img src={getFullUrl(product.photos[0])} alt={product.name} className="w-full h-full object-cover transition-transform group-hover:scale-105 duration-500" />
+                       ) : (
+                         <span className="text-slate-400 z-10 transition-transform group-hover:scale-105 duration-500">{product.name} Image</span>
+                       )}
+                    </div>
+                    <div className="p-6">
+                       <h4 className="text-xl font-bold text-slate-800 mb-2">{product.name}</h4>
+                       <p className="text-sm text-slate-600 mb-4 h-10 overflow-hidden line-clamp-2">{product.description}</p>
+                       <div className="flex justify-between items-center">
+                          <span className="font-semibold text-brand-600">₹{product.price}</span>
+                          <div className="w-8 h-8 rounded-full bg-brand-600 text-white flex items-center justify-center transform group-hover:translate-x-2 transition-transform shadow-md">→</div>
+                       </div>
+                    </div>
+                 </motion.div>
+               )) : (
+                 <div className="col-span-full text-center py-10 text-slate-500 font-medium bg-white rounded-xl shadow-sm border border-slate-100">
+                    No products available right now. Please check back later.
+                 </div>
+               )}
             </motion.div>
          </div>
+
+         <Modal
+            title={<span className="text-2xl font-bold text-slate-800">{activeProduct?.name}</span>}
+            open={isModalVisible}
+            onCancel={() => setIsModalVisible(false)}
+            footer={null}
+            width={700}
+            centered
+         >
+            <div className="mt-4">
+              {activeProduct?.photos && activeProduct.photos.length > 0 ? (
+                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                   <Image.PreviewGroup>
+                      {activeProduct.photos.map((photo: string, index: number) => (
+                         <div key={index} className="aspect-square rounded-lg overflow-hidden bg-slate-100 flex items-center justify-center border border-slate-200 cursor-pointer shadow-sm hover:shadow-md transition-shadow">
+                            <Image 
+                               src={getFullUrl(photo)} 
+                               alt={`${activeProduct.name} ${index + 1}`}
+                               className="object-cover w-full h-full"
+                            />
+                         </div>
+                      ))}
+                   </Image.PreviewGroup>
+                 </div>
+              ) : (
+                 <div className="p-10 text-center bg-slate-50 rounded-lg text-slate-400 border border-dashed border-slate-200">
+                    <p>No photos available for this product.</p>
+                 </div>
+              )}
+            </div>
+         </Modal>
       </section>
    );
 }

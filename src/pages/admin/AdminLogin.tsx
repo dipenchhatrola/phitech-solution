@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { isAdminAuthed, setAdminSession } from "../../utils/adminAuth";
+import api from "../../utils/api";
 
 const ADMIN_CREDENTIALS = {
   username: "admin",
@@ -8,39 +8,39 @@ const ADMIN_CREDENTIALS = {
 };
 
 export default function AdminLogin() {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
-    if (isAdminAuthed()) {
+    if (localStorage.getItem("adminToken")) {
       navigate("/admin", { replace: true });
     }
   }, [navigate]);
 
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setError("");
 
-    if (!username.trim() || !password) {
+    if (!email.trim() || !password) {
       setError("Please enter your admin credentials.");
       return;
     }
 
-    if (
-      username.trim() === ADMIN_CREDENTIALS.username &&
-      password === ADMIN_CREDENTIALS.password
-    ) {
-      setAdminSession(username.trim());
+    try {
+      const response = await api.post("/auth/admin-login", { email, password });
+      
+      localStorage.setItem("adminToken", response.data.token);
+      localStorage.setItem("adminInfo", JSON.stringify(response.data));
+
       const state = location.state as { from?: { pathname?: string } } | null;
       const redirectTo = state?.from?.pathname ?? "/admin";
       navigate(redirectTo, { replace: true });
-      return;
+    } catch (err: any) {
+      setError(err.response?.data?.message || "Invalid email or password.");
     }
-
-    setError("Invalid username or password.");
   };
 
   return (
@@ -56,15 +56,15 @@ export default function AdminLogin() {
         <form onSubmit={handleSubmit} className="px-8 py-6 space-y-5">
           <div>
             <label className="block text-sm font-semibold text-slate-700 mb-2">
-              Username
+              Email
             </label>
             <input
-              value={username}
-              onChange={(event) => setUsername(event.target.value)}
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
               className="w-full rounded-lg border border-slate-200 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-slate-900"
-              type="text"
-              placeholder="admin"
-              autoComplete="username"
+              type="email"
+              placeholder="admin@phitech.com"
+              autoComplete="email"
             />
           </div>
 

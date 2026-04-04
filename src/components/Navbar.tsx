@@ -1,12 +1,14 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 
 export default function Navbar() {
   const location = useLocation();
+  const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [isDarkSlide, setIsDarkSlide] = useState(false);
+  const [activeSection, setActiveSection] = useState("home");
 
   useEffect(() => {
     const handleScroll = () => {
@@ -25,14 +27,39 @@ export default function Navbar() {
   }, []);
 
   const navLinks = [
-    { path: "/", label: "Home" },
-    { path: "/about-us", label: "About Us" },
-    { path: "/product", label: "Products" },
-    { path: "/mould", label: "Moulds" },
-    { path: "/services", label: "Services" },
-    { path: "/clients", label: "Clients" },
-    { path: "/contact", label: "Contact Us" }
+    { id: "home", label: "Home" },
+    { id: "about-us", label: "About Us" },
+    { id: "product", label: "Products" },
+    { id: "mould", label: "Moulds" },
+    { id: "services", label: "Services" },
+    { id: "clients", label: "Clients" },
+    { id: "contact", label: "Contact Us" }
   ];
+
+  const handleNavClick = (id: string) => {
+    setActiveSection(id);
+    setIsMenuOpen(false);
+    
+    // Smooth scrolling handling
+    if (location.pathname !== "/") {
+      navigate("/");
+      setTimeout(() => {
+        const element = document.getElementById(id);
+        if (element) {
+          const top = element.getBoundingClientRect().top + window.scrollY - 80;
+          window.scrollTo({ top, behavior: "smooth" });
+        }
+      }, 100);
+    } else {
+      const element = document.getElementById(id);
+      if (element) {
+        const top = element.getBoundingClientRect().top + window.scrollY - 80;
+        window.scrollTo({ top, behavior: "smooth" });
+      } else {
+         window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+    }
+  };
 
   const isWhiteText = !scrolled && isDarkSlide;
 
@@ -46,24 +73,24 @@ export default function Navbar() {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center">
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-1 group">
+          <button onClick={() => handleNavClick("home")} className="flex items-center space-x-1 group focus:outline-none">
             <div className="w-8 h-8 rounded-full bg-brand-600 flex items-center justify-center text-white font-bold text-xl mr-1 group-hover:rotate-12 transition-transform">
               P
             </div>
             <span className={`text-2xl font-display font-light tracking-tight transition-colors duration-300 ${isWhiteText ? 'text-white' : 'text-slate-800'}`}>
               Phi<span className={`font-bold transition-colors duration-300 ${isWhiteText ? 'text-white' : 'text-brand-600'}`}>TECH</span>
             </span>
-          </Link>
+          </button>
 
           {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center space-x-1 xl:space-x-2">
             {navLinks.map((link) => {
-              const isActive = location.pathname === link.path;
+              const isActive = activeSection === link.id && location.pathname === "/";
               return (
-                <Link
-                  key={link.path}
-                  to={link.path}
-                  className={`relative px-4 py-2 text-sm font-medium transition-colors duration-300
+                <button
+                  key={link.id}
+                  onClick={() => handleNavClick(link.id)}
+                  className={`relative px-4 py-2 text-sm font-medium transition-colors duration-300 focus:outline-none
                     ${isActive 
                       ? (isWhiteText ? 'text-white' : 'text-brand-600') 
                       : (isWhiteText ? 'text-white/80 hover:text-white' : 'text-slate-600 hover:text-brand-600')
@@ -71,7 +98,7 @@ export default function Navbar() {
                 >
                   {link.label}
                   <span className={`absolute bottom-0 left-1/2 h-0.5 transition-all duration-300 transform -translate-x-1/2 ${isActive ? 'w-1/2' : 'w-0 group-hover:w-1/2'} ${isWhiteText ? 'bg-white' : 'bg-brand-600'}`}></span>
-                </Link>
+                </button>
               )
             })}
           </div>
@@ -95,18 +122,17 @@ export default function Navbar() {
         <div className={`lg:hidden overflow-hidden transition-all duration-300 ease-in-out ${isMenuOpen ? 'max-h-96 opacity-100 mt-4' : 'max-h-0 opacity-0'}`}>
           <div className="py-2 space-y-1 bg-white border border-slate-100 rounded-2xl p-4 shadow-xl">
             {navLinks.map((link) => (
-              <Link
-                key={link.path}
-                to={link.path}
-                onClick={() => setIsMenuOpen(false)}
-                className={`block px-4 py-3 rounded-xl text-sm font-medium
-                  ${location.pathname === link.path 
+              <button
+                key={link.id}
+                onClick={() => handleNavClick(link.id)}
+                className={`block w-full text-left px-4 py-3 rounded-xl text-sm font-medium focus:outline-none focus:bg-slate-50
+                  ${activeSection === link.id && location.pathname === "/"
                     ? 'bg-brand-50 text-brand-600' 
                     : 'text-slate-600 hover:bg-slate-50 hover:text-brand-600'
                   }`}
               >
                 {link.label}
-              </Link>
+              </button>
             ))}
           </div>
         </div>

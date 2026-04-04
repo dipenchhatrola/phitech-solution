@@ -11,13 +11,13 @@ export default function Home() {
   return (
     <div className="flex flex-col min-h-screen">
       {/* Modular Page Sections */}
-      <Hero />
-      <About />
-      <Products />
-      <Mould />
-      <Services />
-      <Clients />
-      <Contact />
+      <div id="home"><Hero /></div>
+      <div id="about-us"><About /></div>
+      <div id="product"><Products /></div>
+      <div id="mould"><Mould /></div>
+      <div id="services"><Services /></div>
+      <div id="clients"><Clients /></div>
+      <div id="contact"><Contact /></div>
 
       {/* WhatsApp Floating Button */}
       <a
