@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Table, Tag, Button, Modal, Form, Input, DatePicker, Select, InputNumber, Space, message, Popconfirm } from "antd";
+import { Table, Tag, Button, Modal, Form, DatePicker, Select, InputNumber, Space, message, Popconfirm } from "antd";
 import { PlusOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import api from "../../utils/api";
@@ -116,7 +116,6 @@ export default function AdminMouldStatus() {
       ],
       onFilter: (value: any, record: any) => record.status === value,
       render: (status: string, record: any) => {
-        let color = status === 'Completed' ? 'green' : status === 'In Machine' ? 'blue' : 'gold';
         return (
           <Select size="small" value={status} style={{ width: 120 }} onChange={(val) => handleUpdateStatus(record._id, val)}>
             <Option value="Pending"><Tag color="gold">Pending</Tag></Option>

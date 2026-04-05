@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Table, Button, Modal, Form, Input, InputNumber, Space, Popconfirm, message, Upload, Switch } from "antd";
-import { PlusOutlined, EditOutlined, DeleteOutlined, InboxOutlined } from "@ant-design/icons";
+import { PlusOutlined, DeleteOutlined, InboxOutlined } from "@ant-design/icons";
 import api from "../../utils/api";
 
 const { Dragger } = Upload;
@@ -78,11 +78,6 @@ export default function AdminProducts() {
     } catch (error) {
       console.log("Validation Failed:", error);
     }
-  };
-
-  const normFile = (e: any) => {
-    if (Array.isArray(e)) return e;
-    return e?.fileList;
   };
 
   const columns = [

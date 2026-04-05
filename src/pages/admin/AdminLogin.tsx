@@ -2,10 +2,6 @@ import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import api from "../../utils/api";
 
-const ADMIN_CREDENTIALS = {
-  username: "admin",
-  password: "admin123",
-};
 
 export default function AdminLogin() {
   const [email, setEmail] = useState("");
