@@ -35,7 +35,12 @@ export default function Products() {
    }, []);
 
    const getFullUrl = (url: string) => {
-     return (process.env.REACT_APP_BACKEND_URL || 'http://localhost:5001') + url;
+     if (!url) return url;
+     if (/^https?:\/\//i.test(url)) return url;
+     const base = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5001';
+     const normalizedBase = base.replace(/\/+$/, '');
+     const normalizedPath = url.startsWith('/') ? url : `/${url}`;
+     return `${normalizedBase}${normalizedPath}`;
    };
 
    return (

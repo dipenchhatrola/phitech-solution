@@ -24,10 +24,12 @@ export default function AdminLogin() {
       setError("Please enter your admin credentials.");
       return;
     }
+    console.log("email", email);
+    console.log("password", password);
 
     try {
       const response = await api.post("/auth/admin-login", { email, password });
-      
+      console.log(response);
       localStorage.setItem("adminToken", response.data.token);
       localStorage.setItem("adminInfo", JSON.stringify(response.data));
 
