@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Table, Button, Modal, Form, Input, InputNumber, Space, Popconfirm, message, Upload, Switch } from "antd";
+import { Table, Button, Modal, Form, Input, InputNumber, Space, Popconfirm, message, Upload, Switch, Image } from "antd";
 import { PlusOutlined, DeleteOutlined, InboxOutlined } from "@ant-design/icons";
 import api from "../../utils/api";
 
@@ -12,6 +12,19 @@ export default function AdminProducts() {
   const [form] = Form.useForm();
   const [editingId, setEditingId] = useState<string | null>(null);
   const [fileList, setFileList] = useState<any[]>([]);
+  const backendBase = process.env.REACT_APP_BACKEND_URL || "";
+  const normalizedBackendBase = backendBase.endsWith("/")
+    ? backendBase.slice(0, -1)
+    : backendBase;
+
+  const buildPhotoUrl = (photoUrl: string) => {
+    if (!photoUrl) return "";
+    if (/^https?:\/\//i.test(photoUrl)) return photoUrl;
+    if (photoUrl.startsWith("/")) {
+      return `${normalizedBackendBase}${photoUrl}`;
+    }
+    return `${normalizedBackendBase}/${photoUrl}`;
+  };
 
   useEffect(() => {
     fetchProducts();
@@ -93,6 +106,41 @@ export default function AdminProducts() {
       title: 'Description',
       dataIndex: 'description',
       key: 'description',
+    },
+    {
+      title: 'Image',
+      dataIndex: 'photos',
+      key: 'photos',
+      render: (photos: any) => {
+        const list = Array.isArray(photos)
+          ? photos.filter(Boolean)
+          : photos
+            ? [photos]
+            : [];
+
+        if (list.length === 0) {
+          return <span className="text-xs text-gray-400">No image</span>;
+        }
+
+        return (
+          <Image.PreviewGroup>
+            <Space size="small">
+              {list.slice(0, 3).map((src: string, index: number) => (
+                <Image
+                  key={`${src}-${index}`}
+                  src={buildPhotoUrl(src)}
+                  width={48}
+                  height={48}
+                  style={{ objectFit: "cover", borderRadius: 6 }}
+                />
+              ))}
+              {list.length > 3 ? (
+                <span className="text-xs text-gray-500">+{list.length - 3}</span>
+              ) : null}
+            </Space>
+          </Image.PreviewGroup>
+        );
+      }
     },
     {
       title: 'Price',
