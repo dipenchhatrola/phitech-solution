@@ -26,24 +26,24 @@ export default function Hero() {
         <section className="relative h-[650px] lg:h-[750px] overflow-hidden bg-slate-100 flex items-center justify-center">
 
             {/* SLIDE 0: Delivering Innovation (Horizontal Line of Circles) */}
-            <div className={`absolute inset-0 bg-[#f5f6f8] transition-opacity duration-3000 flex flex-col items-center justify-center pt-6 ${currentSlide === 0 ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'}`}>
+            <div className={`absolute inset-0 bg-[#f5f6f8] transition-opacity duration-3000 flex flex-col items-center justify-between pt-28 pb-20 ${currentSlide === 0 ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'}`}>
 
                 {/* Heading Text restored to match Image 1 */}
-                <motion.div 
+                <motion.div
                     initial={{ y: 30, opacity: 0 }}
                     animate={{ y: currentSlide === 0 ? 0 : 30, opacity: currentSlide === 0 ? 1 : 0 }}
                     transition={{ duration: 0.8, delay: 0.3 }}
-                    className="text-center w-full mb-4 z-10"
+                    className="text-center w-full z-10"
                 >
                     <h1 className="text-3xl md:text-5xl font-display font-black text-[#e41e26] mb-2">Delivering Innovation</h1>
                     <p className="text-xl md:text-3xl text-slate-700 font-bold">We provide solution for</p>
                 </motion.div>
 
-                <div className="w-full max-w-5xl mx-auto flex justify-center items-center px-4 z-10">
+                <div className="w-full max-w-5xl mx-auto flex justify-center items-center px-4 z-10 flex-1 min-h-0 py-4">
                     <img
                         src="/slider-image.png"
                         alt="Innovation Services Hexagon Arch"
-                        className="w-full h-[450px] drop-shadow-xl"
+                        className="w-full h-full object-contain drop-shadow-xl"
                         onError={(e) => {
                             const target = e.target as HTMLImageElement;
                             target.src = "https://phitech.co.in/wp-content/uploads/2023/07/Banner-1-product-1.png";
@@ -51,7 +51,7 @@ export default function Hero() {
                     />
                 </div>
 
-                <div className="text-center w-full mb-4 z-10">
+                <div className="text-center w-full z-10">
                     <p className="text-xl md:text-3xl text-slate-700 font-bold">Mould</p>
                     <p className="text-xl md:text-3xl text-slate-700 font-bold">Manufacturing</p>
                 </div>
@@ -59,13 +59,13 @@ export default function Hero() {
 
             {/* SLIDE 1: Factory Title Background */}
             <div className={`absolute inset-0 transition-opacity duration-3000 ${currentSlide === 1 ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'}`}>
-                <div 
+                <div
                     className="absolute inset-0 bg-cover bg-center bg-no-repeat"
                     style={{ backgroundImage: "url('https://phitech.co.in/wp-content/uploads/2023/07/Banner-2-min.jpg')" }}
                 >
                     <div className="absolute inset-0 bg-black/50"></div>
                 </div>
-                <motion.div 
+                <motion.div
                     initial={{ y: 30, opacity: 0 }}
                     animate={{ y: currentSlide === 1 ? 0 : 30, opacity: currentSlide === 1 ? 1 : 0 }}
                     transition={{ duration: 0.8, delay: 0.3 }}
@@ -78,23 +78,23 @@ export default function Hero() {
             </div>
 
             {/* SLIDE 2: Services Hexagons Design Arch */}
-            <div className={`absolute inset-0 bg-[#f5f6f8] transition-opacity duration-3000 flex flex-col items-center justify-center pt-6 ${currentSlide === 2 ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'}`}>
-                <div className="w-full max-w-5xl mx-auto flex justify-center items-center px-4 z-10">
+            <div className={`absolute inset-0 bg-[#f5f6f8] transition-opacity duration-3000 flex flex-col items-center justify-between pt-28 pb-20 ${currentSlide === 2 ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'}`}>
+                <div className="w-full max-w-5xl mx-auto flex justify-center items-center px-4 z-10 flex-1 min-h-0 py-4">
                     <img
                         src="/services-hexagons.png"
                         alt="Innovation Services Hexagon Arch"
-                        className="w-full h-auto drop-shadow-xl"
+                        className="w-full h-full object-contain drop-shadow-xl"
                         onError={(e) => {
                             const target = e.target as HTMLImageElement;
                             target.src = "https://phitech.co.in/wp-content/uploads/2023/07/Banner-3-prod.png";
                         }}
                     />
                 </div>
-                <motion.div 
+                <motion.div
                     initial={{ y: 30, opacity: 0 }}
                     animate={{ y: currentSlide === 2 ? 0 : 30, opacity: currentSlide === 2 ? 1 : 0 }}
                     transition={{ duration: 0.8, delay: 0.3 }}
-                    className="text-center w-full mb-4 z-10"
+                    className="text-center w-full z-10"
                 >
                     <h1 className="text-4xl md:text-6xl font-display font-black text-[#e41e26] mb-2">Services</h1>
                     <p className="text-xl md:text-3xl text-slate-700 font-bold">We provide</p>

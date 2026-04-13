@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Table, Tag, Button, Modal, Form, DatePicker, Select, InputNumber, Space, message, Popconfirm } from "antd";
+import { Table, Tag, Button, Modal, Form, DatePicker, Select, Input, InputNumber, Space, message, Popconfirm } from "antd";
 import { PlusOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import api from "../../utils/api";
@@ -10,6 +10,8 @@ export default function AdminMouldStatus() {
   const [moulds, setMoulds] = useState<any[]>([]);
   const [clients, setClients] = useState<any[]>([]);
   const [products, setProducts] = useState<any[]>([]);
+  const [customProductNames, setCustomProductNames] = useState<string[]>([]);
+  const [customProductName, setCustomProductName] = useState("");
   const [analytics, setAnalytics] = useState<any>({
     totalMoulds: 0,
     statusCounts: { Pending: 0, "In Machine": 0, Completed: 0 }
@@ -46,8 +48,17 @@ export default function AdminMouldStatus() {
   const handleAdd = () => {
     setEditingId(null);
     form.resetFields();
+    setCustomProductName("");
     setIsModalVisible(true);
   };
+
+  const productOptions = Array.from(
+    new Set([
+      ...products.map((product: any) => product?.name).filter(Boolean),
+      ...moulds.map((mould: any) => mould?.productId).filter(Boolean),
+      ...customProductNames
+    ])
+  ).map((name) => ({ value: name, label: name }));
 
   const handleDelete = async (id: string) => {
     try {
@@ -126,10 +137,11 @@ export default function AdminMouldStatus() {
       },
     },
     {
-      title: 'Quantity',
-      dataIndex: 'quantity',
-      key: 'quantity',
-      sorter: (a: any, b: any) => a.quantity - b.quantity,
+      title: 'Percentage (%)',
+      dataIndex: 'percentage',
+      key: 'percentage',
+      sorter: (a: any, b: any) => a.percentage - b.percentage,
+      render: (val: any) => `${val || 0}%`,
     },
     {
       title: 'Start Date',
@@ -149,6 +161,7 @@ export default function AdminMouldStatus() {
           <Button icon={<EditOutlined />} onClick={() => { 
             setEditingId(record._id); 
             form.setFieldsValue({...record, startDate: dayjs(record.startDate), expectedCompletion: dayjs(record.expectedCompletion)}); 
+            setCustomProductName("");
             setIsModalVisible(true); 
           }} />
           <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record._id)}>
@@ -211,17 +224,52 @@ export default function AdminMouldStatus() {
               ))}
             </Select>
           </Form.Item>
-          <Form.Item name="productId" label="Product" rules={[{ required: true }]}>
-            <Select showSearch placeholder="Select a Product" filterOption={(input, option) =>
-              (option?.children as unknown as string).toLowerCase().includes(input.toLowerCase())
-            }>
-              {products.map((product: any) => (
-                <Option key={product._id} value={product.name}>{product.name}</Option>
-              ))}
-            </Select>
+          <Form.Item name="productId" label="Product Name" rules={[{ required: true, message: "Please select or enter a product name" }]}>
+            <Select
+              showSearch
+              options={productOptions}
+              placeholder="Select a product name"
+              filterOption={(inputValue, option: any) =>
+                (option?.label || "").toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
+              }
+              dropdownRender={(menu) => (
+                <div>
+                  {menu}
+                  <div className="px-3 py-2 border-t border-slate-100">
+                    <p className="text-xs text-slate-500 mb-2">Custom Product Name</p>
+                    <div className="flex gap-2">
+                      <Input
+                        placeholder="Type custom name"
+                        value={customProductName}
+                        onChange={(e) => setCustomProductName(e.target.value)}
+                        onPressEnter={() => {
+                          const trimmed = customProductName.trim();
+                          if (!trimmed) return;
+                          setCustomProductNames((prev) => (prev.includes(trimmed) ? prev : [...prev, trimmed]));
+                          form.setFieldsValue({ productId: trimmed });
+                          setCustomProductName("");
+                        }}
+                      />
+                      <Button
+                        type="primary"
+                        onClick={() => {
+                          const trimmed = customProductName.trim();
+                          if (!trimmed) return;
+                          setCustomProductNames((prev) => (prev.includes(trimmed) ? prev : [...prev, trimmed]));
+                          form.setFieldsValue({ productId: trimmed });
+                          setCustomProductName("");
+                        }}
+                      >
+                        Use
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              )}
+            />
           </Form.Item>
-          <Form.Item name="quantity" label="Quantity" rules={[{ required: true }]}>
-            <InputNumber style={{ width: '100%' }} />
+          <Form.Item name="percentage" label="Percentage (%)" rules={[{ required: true }]}>
+            <InputNumber min={0} max={100} style={{ width: '100%' }} />
           </Form.Item>
           <Form.Item name="startDate" label="Start Date" rules={[{ required: true }]}>
             <DatePicker style={{ width: '100%' }} />

@@ -82,8 +82,7 @@ export default function Products() {
                     <div className="p-6">
                        <h4 className="text-xl font-bold text-slate-800 mb-2">{product.name}</h4>
                        <p className="text-sm text-slate-600 mb-4 h-10 overflow-hidden line-clamp-2">{product.description}</p>
-                       <div className="flex justify-between items-center">
-                          <span className="font-semibold text-brand-600">₹{product.price}</span>
+                       <div className="flex justify-end items-center">
                           <div className="w-8 h-8 rounded-full bg-brand-600 text-white flex items-center justify-center transform group-hover:translate-x-2 transition-transform shadow-md">→</div>
                        </div>
                     </div>

@@ -136,6 +136,7 @@ export default function Dashboard() {
               {data.map((item, index) => {
                 const visual = getStatusVisuals(item.status);
                 const imageUrl = getProductImage(item.productId);
+                const percentage = typeof item.percentage === "number" ? item.percentage : visual.progress;
                 
                 return (
                   <motion.div 
@@ -168,8 +169,8 @@ export default function Dashboard() {
                     <div className="p-6">
                       <div className="flex justify-between items-center mb-6">
                         <div>
-                          <p className="text-xs text-slate-400 uppercase tracking-wider font-semibold mb-1">Quantity</p>
-                          <p className="text-lg font-semibold text-slate-800">{item.quantity} Units</p>
+                          <p className="text-xs text-slate-400 uppercase tracking-wider font-semibold mb-1">Percentage</p>
+                          <p className="text-lg font-semibold text-slate-800">{percentage}%</p>
                         </div>
                         <div className="text-right">
                           <p className="text-xs text-slate-400 uppercase tracking-wider font-semibold mb-1">Start Date</p>
@@ -183,12 +184,12 @@ export default function Dashboard() {
                       <div className="mb-2">
                         <div className="flex justify-between text-xs font-medium mb-2">
                           <span className="text-slate-500">Progress</span>
-                          <span className="text-slate-800 font-bold">{visual.progress}%</span>
+                          <span className="text-slate-800 font-bold">{percentage}%</span>
                         </div>
                         <div className="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
                           <motion.div 
                             initial={{ width: 0 }}
-                            animate={{ width: `${visual.progress}%` }}
+                            animate={{ width: `${percentage}%` }}
                             transition={{ duration: 1, ease: "easeOut", delay: 0.2 }}
                             className={`h-2.5 rounded-full ${item.status === 'Pending' ? 'bg-amber-400' : item.status === 'In Machine' ? 'bg-blue-500' : 'bg-emerald-500'}`}
                           ></motion.div>

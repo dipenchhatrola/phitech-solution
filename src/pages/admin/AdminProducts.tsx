@@ -71,7 +71,6 @@ export default function AdminProducts() {
       const formData = new FormData();
       formData.append("name", values.name);
       formData.append("description", values.description);
-      formData.append("price", values.price.toString());
       formData.append("isPublic", values.isPublic ? "true" : "false");
       
       fileList.forEach(file => {
@@ -142,12 +141,7 @@ export default function AdminProducts() {
         );
       }
     },
-    {
-      title: 'Price',
-      dataIndex: 'price',
-      key: 'price',
-      sorter: (a: any, b: any) => a.price - b.price,
-    },
+
     {
       title: 'Public',
       dataIndex: 'isPublic',
@@ -196,9 +190,7 @@ export default function AdminProducts() {
           <Form.Item name="description" label="Description" rules={[{ required: true }]}>
             <Input.TextArea />
           </Form.Item>
-          <Form.Item name="price" label="Price" rules={[{ required: true }]}>
-            <InputNumber style={{ width: '100%' }} />
-          </Form.Item>
+
           <Form.Item name="isPublic" label="Show on Public Website" valuePropName="checked" initialValue={true}>
             <Switch />
           </Form.Item>

@@ -3,7 +3,7 @@ export const mouldData = [
     clientCode: "141", 
     product: "Plastic Cap", 
     status: "Pending",
-    quantity: 5000,
+    percentage: 20,
     startDate: "2024-01-15",
     expectedCompletion: "2024-01-25"
   },
@@ -11,7 +11,7 @@ export const mouldData = [
     clientCode: "142", 
     product: "Bottle", 
     status: "In Machine",
-    quantity: 10000,
+    percentage: 65,
     startDate: "2024-01-10",
     expectedCompletion: "2024-01-30"
   },
@@ -19,7 +19,7 @@ export const mouldData = [
     clientCode: "143", 
     product: "Container", 
     status: "Completed",
-    quantity: 2500,
+    percentage: 100,
     startDate: "2024-01-05",
     expectedCompletion: "2024-01-20",
     completedDate: "2024-01-19"
@@ -29,7 +29,7 @@ export const mouldData = [
     clientCode: "141", 
     product: "Handle", 
     status: "In Machine",
-    quantity: 3000,
+    percentage: 55,
     startDate: "2024-01-12",
     expectedCompletion: "2024-01-28"
   },
@@ -37,7 +37,7 @@ export const mouldData = [
     clientCode: "142", 
     product: "Lid", 
     status: "Completed",
-    quantity: 8000,
+    percentage: 100,
     startDate: "2024-01-08",
     expectedCompletion: "2024-01-18",
     completedDate: "2024-01-17"
