@@ -70,21 +70,32 @@ export default function AdminMouldStatus() {
     }
   };
 
-  const handleUpdateStatus = async (id: string, newStatus: string) => {
+  const handleUpdateMould = async (id: string, updates: any) => {
     try {
-      await api.put(`/moulds/${id}`, { status: newStatus });
-      message.success("Status updated");
+      await api.put(`/moulds/${id}`, updates);
       fetchData();
     } catch (error) {
-      message.error("Failed to update status");
+      console.error(error);
+      message.error("Failed to update mould");
     }
   };
 
   const handleOk = async () => {
     try {
+      // Prioritize custom name if something is typed in the custom box
+      const trimmedCustom = customProductName.trim();
+      if (trimmedCustom) {
+        form.setFieldsValue({ productId: trimmedCustom });
+        if (!customProductNames.includes(trimmedCustom)) {
+          setCustomProductNames((prev) => [...prev, trimmedCustom]);
+        }
+        setCustomProductName(""); // Clear it after use
+      }
+
       const values = await form.validateFields();
       if (values.startDate) values.startDate = values.startDate.toDate();
       if (values.expectedCompletion) values.expectedCompletion = values.expectedCompletion.toDate();
+      console.log("Submitting Mould Data:", values);
 
       if (editingId) {
         await api.put(`/moulds/${editingId}`, values);
@@ -112,7 +123,7 @@ export default function AdminMouldStatus() {
       // To add filtering for clientId we could add distinct client filters dynamically
     },
     {
-      title: 'Product ID',
+      title: 'Product Name',
       dataIndex: 'productId',
       key: 'productId',
     },
@@ -128,7 +139,7 @@ export default function AdminMouldStatus() {
       onFilter: (value: any, record: any) => record.status === value,
       render: (status: string, record: any) => {
         return (
-          <Select size="small" value={status} style={{ width: 120 }} onChange={(val) => handleUpdateStatus(record._id, val)}>
+          <Select size="small" value={status} style={{ width: 120 }} onChange={(val) => handleUpdateMould(record._id, { status: val })}>
             <Option value="Pending"><Tag color="gold">Pending</Tag></Option>
             <Option value="In Machine"><Tag color="blue">In Machine</Tag></Option>
             <Option value="Completed"><Tag color="green">Completed</Tag></Option>
@@ -141,28 +152,41 @@ export default function AdminMouldStatus() {
       dataIndex: 'percentage',
       key: 'percentage',
       sorter: (a: any, b: any) => a.percentage - b.percentage,
-      render: (val: any) => `${val || 0}%`,
+      render: (val: any, record: any) => (
+        <InputNumber
+          min={0}
+          max={100}
+          size="small"
+          value={val || 0}
+          formatter={value => `${value}%`}
+          parser={value => value!.replace('%', '')}
+          onChange={(newVal) => handleUpdateMould(record._id, { percentage: newVal })}
+          style={{ width: 80 }}
+        />
+      ),
     },
     {
       title: 'Start Date',
       dataIndex: 'startDate',
       key: 'startDate',
+      render: (date: string) => date ? dayjs(date).format("DD-MM-YYYY") : "-",
     },
     {
       title: 'Expected',
       dataIndex: 'expectedCompletion',
       key: 'expectedCompletion',
+      render: (date: string) => date ? dayjs(date).format("DD-MM-YYYY") : "-",
     },
     {
       title: 'Action',
       key: 'action',
       render: (_: any, record: any) => (
         <Space size="middle">
-          <Button icon={<EditOutlined />} onClick={() => { 
-            setEditingId(record._id); 
-            form.setFieldsValue({...record, startDate: dayjs(record.startDate), expectedCompletion: dayjs(record.expectedCompletion)}); 
+          <Button icon={<EditOutlined />} onClick={() => {
+            setEditingId(record._id);
+            form.setFieldsValue({ ...record, startDate: dayjs(record.startDate), expectedCompletion: dayjs(record.expectedCompletion) });
             setCustomProductName("");
-            setIsModalVisible(true); 
+            setIsModalVisible(true);
           }} />
           <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record._id)}>
             <Button danger icon={<DeleteOutlined />} />
@@ -204,10 +228,10 @@ export default function AdminMouldStatus() {
           <Button type="primary" icon={<PlusOutlined />} onClick={handleAdd}>Add Mould</Button>
         </div>
 
-        <Table 
-          columns={columns} 
-          dataSource={moulds} 
-          rowKey="_id" 
+        <Table
+          columns={columns}
+          dataSource={moulds}
+          rowKey="_id"
           loading={loading}
           pagination={{ pageSize: 10 }}
         />
