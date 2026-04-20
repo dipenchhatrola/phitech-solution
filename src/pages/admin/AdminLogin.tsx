@@ -90,7 +90,7 @@ export default function AdminLogin() {
           </button>
 
           <div className="rounded-lg bg-slate-50 px-4 py-3 text-xs text-slate-500">
-            Demo credentials: admin / admin123
+            Demo credentials: admin@phitech.com / admin
           </div>
         </form>
       </div>
