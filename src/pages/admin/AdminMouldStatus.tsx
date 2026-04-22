@@ -1,25 +1,34 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Table, Tag, Button, Modal, Form, DatePicker, Select, Input, InputNumber, Space, message, Popconfirm } from "antd";
 import { PlusOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import api from "../../utils/api";
+import { useMoulds } from "../../context/MouldContext";
 
 const { Option } = Select;
 
 export default function AdminMouldStatus() {
-  const [moulds, setMoulds] = useState<any[]>([]);
+  const { moulds, setMoulds, updateMouldOptimistic, fetchMoulds, loading: mouldsLoading } = useMoulds();
   const [clients, setClients] = useState<any[]>([]);
   const [products, setProducts] = useState<any[]>([]);
   const [customProductNames, setCustomProductNames] = useState<string[]>([]);
   const [customProductName, setCustomProductName] = useState("");
-  const [analytics, setAnalytics] = useState<any>({
-    totalMoulds: 0,
-    statusCounts: { Pending: 0, "In Machine": 0, Completed: 0 }
-  });
   const [loading, setLoading] = useState(true);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [form] = Form.useForm();
   const [editingId, setEditingId] = useState<string | null>(null);
+
+  const analytics = useMemo(() => {
+    const totalMoulds = moulds.length;
+    const statusCounts = moulds.reduce((acc: any, mould: any) => {
+      const status = (mould.status || "Pending").replace(" ", ""); // Handle "In Machine" vs "InMachine" mapping if needed
+      // Actually, looking at the code, it uses "In Machine" in Select but analytics shows "InMachine"
+      const key = status === "In Machine" ? "InMachine" : status;
+      acc[key] = (acc[key] || 0) + 1;
+      return acc;
+    }, { Pending: 0, InMachine: 0, Completed: 0 });
+    return { totalMoulds, statusCounts };
+  }, [moulds]);
 
   useEffect(() => {
     fetchData();
@@ -27,14 +36,12 @@ export default function AdminMouldStatus() {
 
   const fetchData = async () => {
     try {
-      const [mouldsRes, analyticsRes, usersRes, productsRes] = await Promise.all([
-        api.get("/moulds"),
-        api.get("/moulds/analytics"),
+      setLoading(true);
+      const [usersRes, productsRes] = await Promise.all([
         api.get("/users"),
         api.get("/products")
       ]);
-      setMoulds(mouldsRes.data);
-      setAnalytics(analyticsRes.data);
+      await fetchMoulds();
       setClients(usersRes.data);
       setProducts(productsRes.data);
     } catch (error) {
@@ -71,13 +78,7 @@ export default function AdminMouldStatus() {
   };
 
   const handleUpdateMould = async (id: string, updates: any) => {
-    try {
-      await api.put(`/moulds/${id}`, updates);
-      fetchData();
-    } catch (error) {
-      console.error(error);
-      message.error("Failed to update mould");
-    }
+    await updateMouldOptimistic(id, updates);
   };
 
   const handleOk = async () => {
@@ -162,6 +163,7 @@ export default function AdminMouldStatus() {
           parser={value => value!.replace('%', '')}
           onChange={(newVal) => handleUpdateMould(record._id, { percentage: newVal })}
           style={{ width: 80 }}
+          disabled={record.status === 'Pending'}
         />
       ),
     },
@@ -292,8 +294,26 @@ export default function AdminMouldStatus() {
               )}
             />
           </Form.Item>
-          <Form.Item name="percentage" label="Percentage (%)" rules={[{ required: true }]}>
-            <InputNumber min={0} max={100} style={{ width: '100%' }} />
+          <Form.Item
+            noStyle
+            shouldUpdate={(prevValues, currentValues) => prevValues.status !== currentValues.status}
+          >
+            {({ getFieldValue, setFieldsValue }) => {
+              const status = getFieldValue('status');
+              if (status === 'Completed' && getFieldValue('percentage') !== 100) {
+                setFieldsValue({ percentage: 100 });
+              }
+              return (
+                <Form.Item name="percentage" label="Percentage (%)" rules={[{ required: true }]}>
+                  <InputNumber
+                    min={0}
+                    max={100}
+                    style={{ width: '100%' }}
+                    disabled={status === 'Pending'}
+                  />
+                </Form.Item>
+              );
+            }}
           </Form.Item>
           <Form.Item name="startDate" label="Start Date" rules={[{ required: true }]}>
             <DatePicker style={{ width: '100%' }} />

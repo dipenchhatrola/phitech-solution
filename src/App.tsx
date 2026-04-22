@@ -15,11 +15,13 @@ import AdminLogin from "./pages/admin/AdminLogin";
 import AdminMouldStatus from "./pages/admin/AdminMouldStatus";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminProducts from "./pages/admin/AdminProducts";
+import { MouldProvider } from "./context/MouldContext";
 import './App.css';
 
 function App() {
   return (
-    <BrowserRouter>
+    <MouldProvider>
+      <BrowserRouter>
       <Routes>
         <Route element={<PublicLayout />}>
           <Route path="/" element={<Home />} />
@@ -48,6 +50,7 @@ function App() {
         </Route>
       </Routes>
     </BrowserRouter>
+    </MouldProvider>
   );
 }
 
