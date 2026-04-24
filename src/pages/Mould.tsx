@@ -37,7 +37,7 @@ export default function Mould() {
                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
             >
                {/* Injection Moulding */}
-               <motion.div variants={itemVariants} className="p-8 border border-slate-100 rounded-2xl hover:shadow-[0_10px_30px_rgb(0,0,0,0.05)] transition-shadow bg-white">
+               <motion.div variants={itemVariants} className="p-8 border border-slate-100 rounded-2xl hover:scale-105 hover:shadow-xl transition-all duration-300 cursor-pointer bg-white">
                   <div className="w-12 h-12 mb-6 text-brand-600">
                      <svg fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" /></svg>
                   </div>
@@ -46,7 +46,7 @@ export default function Mould() {
                </motion.div>
 
                {/* Blow Moulding */}
-               <motion.div variants={itemVariants} className="p-8 border border-slate-100 rounded-2xl hover:shadow-[0_10px_30px_rgb(0,0,0,0.05)] transition-shadow bg-white">
+               <motion.div variants={itemVariants} className="p-8 border border-slate-100 rounded-2xl hover:scale-105 hover:shadow-xl transition-all duration-300 cursor-pointer bg-white">
                   <div className="w-12 h-12 mb-6 text-brand-600">
                      <svg fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" /></svg>
                   </div>
@@ -55,7 +55,7 @@ export default function Mould() {
                </motion.div>
 
                {/* Compression Moulding */}
-               <motion.div variants={itemVariants} className="p-8 border border-slate-100 rounded-2xl hover:shadow-[0_10px_30px_rgb(0,0,0,0.05)] transition-shadow bg-white">
+               <motion.div variants={itemVariants} className="p-8 border border-slate-100 rounded-2xl hover:scale-105 hover:shadow-xl transition-all duration-300 cursor-pointer bg-white">
                   <div className="w-12 h-12 mb-6 text-brand-600">
                      <svg fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" /></svg>
                   </div>
@@ -64,7 +64,7 @@ export default function Mould() {
                </motion.div>
 
                {/* Transfer Moulding */}
-               <motion.div variants={itemVariants} className="p-8 border border-slate-100 rounded-2xl hover:shadow-[0_10px_30px_rgb(0,0,0,0.05)] transition-shadow bg-white">
+               <motion.div variants={itemVariants} className="p-8 border border-slate-100 rounded-2xl hover:scale-105 hover:shadow-xl transition-all duration-300 cursor-pointer bg-white">
                   <div className="w-12 h-12 mb-6 text-brand-600">
                      <svg fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" /></svg>
                   </div>
@@ -73,7 +73,7 @@ export default function Mould() {
                </motion.div>
 
                {/* SMC / BMC Composite */}
-               <motion.div variants={itemVariants} className="p-8 border border-slate-100 rounded-2xl hover:shadow-[0_10px_30px_rgb(0,0,0,0.05)] transition-shadow bg-white">
+               <motion.div variants={itemVariants} className="p-8 border border-slate-100 rounded-2xl hover:scale-105 hover:shadow-xl transition-all duration-300 cursor-pointer bg-white">
                   <div className="w-12 h-12 mb-6 text-brand-600">
                      <svg fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" /></svg>
                   </div>
@@ -82,7 +82,7 @@ export default function Mould() {
                </motion.div>
 
                {/* Extrusion Moulding */}
-               <motion.div variants={itemVariants} className="p-8 border border-slate-100 rounded-2xl hover:shadow-[0_10px_30px_rgb(0,0,0,0.05)] transition-shadow bg-white">
+               <motion.div variants={itemVariants} className="p-8 border border-slate-100 rounded-2xl hover:scale-105 hover:shadow-xl transition-all duration-300 cursor-pointer bg-white">
                   <div className="w-12 h-12 mb-6 text-brand-600">
                      <svg fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" /></svg>
                   </div>

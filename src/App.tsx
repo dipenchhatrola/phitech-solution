@@ -15,6 +15,8 @@ import AdminLogin from "./pages/admin/AdminLogin";
 import AdminMouldStatus from "./pages/admin/AdminMouldStatus";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminProducts from "./pages/admin/AdminProducts";
+import AdminCategories from "./pages/admin/AdminCategories";
+import AdminClients from "./pages/admin/AdminClients";
 import { MouldProvider } from "./context/MouldContext";
 import './App.css';
 
@@ -46,7 +48,9 @@ function App() {
         >
           <Route index element={<AdminMouldStatus />} />
           <Route path="users" element={<AdminUsers />} />
+          <Route path="categories" element={<AdminCategories />} />
           <Route path="products" element={<AdminProducts />} />
+          <Route path="clients" element={<AdminClients />} />
         </Route>
       </Routes>
     </BrowserRouter>

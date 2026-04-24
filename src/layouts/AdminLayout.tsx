@@ -26,6 +26,18 @@ export default function AdminLayout() {
 
           <nav className="flex-1 px-3 py-4 space-y-1">
             <NavLink
+              to="/admin/users"
+              className={({ isActive }) =>
+                `${navBase} ${
+                  isActive
+                    ? "bg-slate-800 text-white"
+                    : "text-slate-300 hover:bg-slate-800/60 hover:text-white"
+                }`
+              }
+            >
+              Users
+            </NavLink>
+            <NavLink
               to="/admin"
               end
               className={({ isActive }) =>
@@ -39,7 +51,7 @@ export default function AdminLayout() {
               Mould Status
             </NavLink>
             <NavLink
-              to="/admin/users"
+              to="/admin/categories"
               className={({ isActive }) =>
                 `${navBase} ${
                   isActive
@@ -48,7 +60,7 @@ export default function AdminLayout() {
                 }`
               }
             >
-              Users
+              Category
             </NavLink>
             <NavLink
               to="/admin/products"
@@ -60,7 +72,19 @@ export default function AdminLayout() {
                 }`
               }
             >
-              Products
+              Product
+            </NavLink>
+            <NavLink
+              to="/admin/clients"
+              className={({ isActive }) =>
+                `${navBase} ${
+                  isActive
+                    ? "bg-slate-800 text-white"
+                    : "text-slate-300 hover:bg-slate-800/60 hover:text-white"
+                }`
+              }
+            >
+              Clients
             </NavLink>
           </nav>
 

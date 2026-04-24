@@ -13,10 +13,23 @@ export default function Navbar() {
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 20);
+
+      if (location.pathname === "/") {
+        const sections = navLinks.map(link => document.getElementById(link.id)).filter(Boolean);
+        const scrollPosition = window.scrollY + 100; // offset for navbar
+
+        for (let i = sections.length - 1; i >= 0; i--) {
+          const section = sections[i];
+          if (section && section.offsetTop <= scrollPosition) {
+            setActiveSection(section.id);
+            break;
+          }
+        }
+      }
     };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [location.pathname]);
 
   useEffect(() => {
     const handleSlideChange = ((e: CustomEvent) => {
@@ -61,7 +74,27 @@ export default function Navbar() {
     }
   };
 
+  useEffect(() => {
+    // Add Google Translate Script
+    const addGoogleTranslateScript = () => {
+      if (!window.googleTranslateElementInit) {
+        const script = document.createElement("script");
+        script.src = "//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit";
+        script.async = true;
+        document.body.appendChild(script);
+        window.googleTranslateElementInit = () => {
+          new window.google.translate.TranslateElement(
+            { pageLanguage: 'en' },
+            'google_translate_element'
+          );
+        };
+      }
+    };
+    addGoogleTranslateScript();
+  }, []);
+
   const isWhiteText = !scrolled && isDarkSlide;
+  const isLoggedIn = !!localStorage.getItem("clientToken") || !!localStorage.getItem("adminToken");
 
   return (
     <motion.nav 
@@ -101,25 +134,51 @@ export default function Navbar() {
                 </button>
               )
             })}
+            
+            {/* Google Translate Dropdown */}
+            <div id="google_translate_element" className="ml-4 h-10 overflow-hidden translate-y-2"></div>
+
+            {/* Profile Icon */}
+            <button
+              onClick={() => navigate(isLoggedIn ? (localStorage.getItem("adminToken") ? "/admin" : "/dashboard") : "/login")}
+              className={`ml-4 p-2 rounded-full border transition-all duration-300 ${isWhiteText ? 'border-white/30 text-white hover:bg-white/10' : 'border-slate-200 text-slate-600 hover:bg-slate-50'}`}
+              title={isLoggedIn ? "Dashboard" : "Login"}
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
+            </button>
           </div>
 
           {/* Mobile Menu Button */}
-          <button
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className={`lg:hidden focus:outline-none p-2 transition-colors duration-300 ${isWhiteText ? 'text-white' : 'text-slate-600 hover:text-brand-600'}`}
-          >
-            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              {isMenuOpen ? (
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              ) : (
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-              )}
-            </svg>
-          </button>
+          <div className="flex items-center space-x-2 lg:hidden">
+            {/* Mobile Profile Icon */}
+            <button
+              onClick={() => navigate(isLoggedIn ? (localStorage.getItem("adminToken") ? "/admin" : "/dashboard") : "/login")}
+              className={`p-2 rounded-full border transition-all duration-300 ${isWhiteText ? 'border-white/30 text-white' : 'border-slate-200 text-slate-600'}`}
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
+            </button>
+
+            <button
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className={`focus:outline-none p-2 transition-colors duration-300 ${isWhiteText ? 'text-white' : 'text-slate-600 hover:text-brand-600'}`}
+            >
+              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                {isMenuOpen ? (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                ) : (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                )}
+              </svg>
+            </button>
+          </div>
         </div>
 
         {/* Mobile Navigation */}
-        <div className={`lg:hidden overflow-hidden transition-all duration-300 ease-in-out ${isMenuOpen ? 'max-h-96 opacity-100 mt-4' : 'max-h-0 opacity-0'}`}>
+        <div className={`lg:hidden overflow-hidden transition-all duration-300 ease-in-out ${isMenuOpen ? 'max-h-[500px] opacity-100 mt-4' : 'max-h-0 opacity-0'}`}>
           <div className="py-2 space-y-1 bg-white border border-slate-100 rounded-2xl p-4 shadow-xl">
             {navLinks.map((link) => (
               <button
@@ -134,9 +193,20 @@ export default function Navbar() {
                 {link.label}
               </button>
             ))}
+            {/* Mobile Google Translate */}
+            <div className="px-4 py-3 border-t border-slate-100 mt-2">
+               <div id="google_translate_element_mobile"></div>
+            </div>
           </div>
         </div>
       </div>
     </motion.nav>
   );
+}
+
+declare global {
+  interface Window {
+    googleTranslateElementInit: () => void;
+    google: any;
+  }
 }

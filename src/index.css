@@ -34,3 +34,29 @@
     @apply bg-clip-text text-transparent bg-gradient-to-r from-brand-600 to-red-400;
   }
 }
+
+/* Hide Google Translate Banner and Tooltips */
+/* Hide Google Translate Banner and Tooltips completely */
+.goog-te-banner-frame,
+iframe.skiptranslate,
+.VIpgJd-ZVi9od-ORHb-OEVmcd,
+.skiptranslate > iframe {
+    display: none !important;
+    visibility: hidden !important;
+}
+
+body {
+    top: 0px !important; 
+    position: static !important;
+}
+
+.goog-tooltip, 
+.goog-tooltip:hover {
+    display: none !important;
+}
+
+.goog-text-highlight {
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}

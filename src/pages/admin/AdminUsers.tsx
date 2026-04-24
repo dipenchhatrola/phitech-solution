@@ -35,31 +35,22 @@ export default function AdminUsers() {
     }
   };
 
-  const handleAdd = () => {
-    form.resetFields();
-    setIsModalVisible(true);
-  };
-
-  const handleOk = async () => {
-    try {
-      const values = await form.validateFields();
-      await api.post("/users", values);
-      message.success("Client added successfully");
-      setIsModalVisible(false);
-      fetchUsers();
-    } catch (error: any) {
-      if (error.response?.data?.message) {
-        message.error(error.response.data.message);
-      }
-    }
-  };
-
   const columns = [
     {
       title: 'Client Code',
       dataIndex: 'clientId',
       key: 'clientId',
       sorter: (a: any, b: any) => a.clientId.localeCompare(b.clientId),
+    },
+    {
+      title: 'Client Name',
+      dataIndex: 'clientName',
+      key: 'clientName',
+    },
+    {
+      title: 'City',
+      dataIndex: 'city',
+      key: 'city',
     },
     {
       title: 'Mobile',
@@ -82,12 +73,48 @@ export default function AdminUsers() {
       title: 'Action',
       key: 'action',
       render: (_: any, record: any) => (
-        <Popconfirm title="Delete this client?" onConfirm={() => handleDelete(record._id)}>
-          <Button danger icon={<DeleteOutlined />} />
-        </Popconfirm>
+        <Space>
+           <Button type="link" onClick={() => handleEdit(record)}>Edit</Button>
+           <Popconfirm title="Delete this client?" onConfirm={() => handleDelete(record._id)}>
+             <Button danger icon={<DeleteOutlined />} />
+           </Popconfirm>
+        </Space>
       ),
     },
   ];
+
+  const [editingId, setEditingId] = useState<string | null>(null);
+
+  const handleEdit = (record: any) => {
+    setEditingId(record._id);
+    form.setFieldsValue(record);
+    setIsModalVisible(true);
+  };
+
+  const handleAdd = () => {
+    setEditingId(null);
+    form.resetFields();
+    setIsModalVisible(true);
+  };
+
+  const handleOk = async () => {
+    try {
+      const values = await form.validateFields();
+      if (editingId) {
+          await api.put(`/users/${editingId}`, values);
+          message.success("Client updated successfully");
+      } else {
+          await api.post("/users", values);
+          message.success("Client added successfully");
+      }
+      setIsModalVisible(false);
+      fetchUsers();
+    } catch (error: any) {
+      if (error.response?.data?.message) {
+        message.error(error.response.data.message);
+      }
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -111,14 +138,23 @@ export default function AdminUsers() {
         />
       </div>
 
-      <Modal title="Add Client" open={isModalVisible} onOk={handleOk} onCancel={() => setIsModalVisible(false)}>
+      <Modal title={editingId ? "Edit Client" : "Add Client"} open={isModalVisible} onOk={handleOk} onCancel={() => setIsModalVisible(false)}>
         <Form form={form} layout="vertical">
           <Form.Item name="clientId" label="Client Code" rules={[{ required: true }]}>
             <Input placeholder="e.g. C001" />
           </Form.Item>
-          <Form.Item name="mobile" label="Mobile Number" rules={[{ required: true }]}>
-            <Input placeholder="Password for client login" />
+          <Form.Item name="clientName" label="Client Name">
+            <Input placeholder="Enter Client Name" />
           </Form.Item>
+          <Form.Item name="city" label="City">
+            <Input placeholder="Enter City" />
+          </Form.Item>
+          <Form.Item name="mobile" label="Mobile Number">
+            <Input placeholder="Mobile Number" />
+          </Form.Item>
+          <div className="text-xs text-slate-500 mb-4">
+             Note: Client Code will be used as password for client login.
+          </div>
         </Form>
       </Modal>
     </div>

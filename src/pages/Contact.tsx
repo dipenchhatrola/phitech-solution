@@ -1,7 +1,47 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+import { message } from 'antd';
+import api from '../utils/api';
 
 export default function Contact() {
+   const [formData, setFormData] = useState({
+      firstName: '',
+      lastName: '',
+      email: '',
+      phone: '',
+      service: '',
+      message: ''
+   });
+   const [loading, setLoading] = useState(false);
+
+   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+      setFormData({ ...formData, [e.target.name]: e.target.value });
+   };
+
+   const handleSubmit = async (e: React.FormEvent) => {
+      e.preventDefault();
+      setLoading(true);
+      
+      try {
+         const response = await api.post('/contact', formData);
+         message.success(response.data.message || 'Inquiry submitted successfully.');
+         // Reset form
+         setFormData({
+            firstName: '',
+            lastName: '',
+            email: '',
+            phone: '',
+            service: '',
+            message: ''
+         });
+      } catch (error: any) {
+         console.error('Submission error:', error);
+         message.error(error.response?.data?.message || 'Failed to submit inquiry. Please try again.');
+      } finally {
+         setLoading(false);
+      }
+   };
+
    return (
       <section className="py-12 md:py-24 bg-[#f4f6f8] relative overflow-hidden">
          {/* Very faint map-like dotted background representation */}
@@ -57,10 +97,6 @@ export default function Contact() {
                      <a href="https://www.instagram.com/phitechsolutions" className="w-[34px] h-[34px] rounded-full bg-gradient-to-tr from-[#f09433] via-[#e6683c] to-[#bc1888] flex items-center justify-center text-white hover:opacity-80 transition-opacity shadow-sm">
                         <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
                      </a>
-                     {/* LinkedIn */}
-                     {/* <a href="#" className="w-[34px] h-[34px] rounded-full bg-[#0a66c2] flex items-center justify-center text-white hover:opacity-80 transition-opacity shadow-sm">
-                        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M4.98 3.5c0 1.381-1.11 2.5-2.48 2.5s-2.48-1.119-2.48-2.5c0-1.38 1.11-2.5 2.48-2.5s2.48 1.12 2.48 2.5zm.02 4.5h-5v16h5v-16zm7.982 0h-4.968v16h4.969v-8.399c0-4.67 6.029-5.052 6.029 0v8.399h4.988v-10.131c0-7.88-8.922-7.593-11.018-3.714v-2.155z"/></svg>
-                     </a> */}
                   </div>
 
                   {/* Small Map Embed (zoomed out to show India roughly) */}
@@ -87,36 +123,36 @@ export default function Contact() {
                   <h3 className="text-2xl font-bold mb-6 font-sans tracking-tight leading-snug">
                      Fill Out The Form Below & We'll<br/>Be In Touch Right Away!
                   </h3>
-                  <form className="space-y-[14px]">
+                  <form onSubmit={handleSubmit} className="space-y-[14px]">
                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-[14px]">
-                        <input type="text" placeholder="First Name" className="w-full px-3 py-2.5 bg-[#fafafa] border border-transparent rounded-[3px] focus:outline-none focus:ring-1 focus:ring-[#e41e26] text-slate-800 placeholder-slate-400 text-[13px]" />
-                        <input type="text" placeholder="Last Name" className="w-full px-3 py-2.5 bg-[#fafafa] border border-transparent rounded-[3px] focus:outline-none focus:ring-1 focus:ring-[#e41e26] text-slate-800 placeholder-slate-400 text-[13px]" />
+                        <input name="firstName" value={formData.firstName} onChange={handleChange} required type="text" placeholder="First Name" className="w-full px-3 py-2.5 bg-[#fafafa] border border-transparent rounded-[3px] focus:outline-none focus:ring-1 focus:ring-[#e41e26] text-slate-800 placeholder-slate-400 text-[13px]" />
+                        <input name="lastName" value={formData.lastName} onChange={handleChange} required type="text" placeholder="Last Name" className="w-full px-3 py-2.5 bg-[#fafafa] border border-transparent rounded-[3px] focus:outline-none focus:ring-1 focus:ring-[#e41e26] text-slate-800 placeholder-slate-400 text-[13px]" />
                      </div>
                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-[14px]">
-                        <input type="email" placeholder="Email Address" className="w-full px-3 py-2.5 bg-[#fafafa] border border-transparent rounded-[3px] focus:outline-none focus:ring-1 focus:ring-[#e41e26] text-slate-800 placeholder-slate-400 text-[13px]" />
-                        <input type="tel" placeholder="Phone Number" className="w-full px-3 py-2.5 bg-[#fafafa] border border-transparent rounded-[3px] focus:outline-none focus:ring-1 focus:ring-[#e41e26] text-slate-800 placeholder-slate-400 text-[13px]" />
+                        <input name="email" value={formData.email} onChange={handleChange} required type="email" placeholder="Email Address" className="w-full px-3 py-2.5 bg-[#fafafa] border border-transparent rounded-[3px] focus:outline-none focus:ring-1 focus:ring-[#e41e26] text-slate-800 placeholder-slate-400 text-[13px]" />
+                        <input name="phone" value={formData.phone} onChange={handleChange} required type="tel" placeholder="Phone Number" className="w-full px-3 py-2.5 bg-[#fafafa] border border-transparent rounded-[3px] focus:outline-none focus:ring-1 focus:ring-[#e41e26] text-slate-800 placeholder-slate-400 text-[13px]" />
                      </div>
                      
                      {/* Select service dropdown with thin chevron */}
                      <div className="relative">
-                        <select className="appearance-none w-full px-3 py-2.5 bg-[#fafafa] border border-transparent rounded-[3px] focus:outline-none focus:ring-1 focus:ring-[#e41e26] text-slate-500 text-[14px] font-normal cursor-pointer">
-                           <option>Select Service</option>
-                           <option>Mould Manufacturing</option>
-                           <option>3D Scanning/CMM</option>
-                           <option>Product Designing</option>
+                        <select name="service" value={formData.service} onChange={handleChange} required className="appearance-none w-full px-3 py-2.5 bg-[#fafafa] border border-transparent rounded-[3px] focus:outline-none focus:ring-1 focus:ring-[#e41e26] text-slate-500 text-[14px] font-normal cursor-pointer">
+                           <option value="">Select Service</option>
+                           <option value="Mould Manufacturing">Mould Manufacturing</option>
+                           <option value="3D Scanning/CMM">3D Scanning/CMM</option>
+                           <option value="Product Designing">Product Designing</option>
                         </select>
                         <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-slate-400">
                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 9l-7 7-7-7" /></svg>
                         </div>
                      </div>
                      
-                     <textarea placeholder="Your Message" rows={4} className="w-full px-3 py-3 bg-[#fafafa] border border-transparent rounded-[3px] focus:outline-none focus:ring-1 focus:ring-[#e41e26] text-slate-800 placeholder-slate-400 text-[13px] resize-none"></textarea>
+                     <textarea name="message" value={formData.message} onChange={handleChange} required placeholder="Your Message" rows={4} className="w-full px-3 py-3 bg-[#fafafa] border border-transparent rounded-[3px] focus:outline-none focus:ring-1 focus:ring-[#e41e26] text-slate-800 placeholder-slate-400 text-[13px] resize-none"></textarea>
                      
                      <div className="flex flex-col space-y-4 pt-1">
                         {/* reCAPTCHA style box */}
                         <div className="flex items-center justify-between bg-[#f9f9f9] border border-[#d3d3d3] rounded-[3px] p-[6px] pl-3 w-full sm:w-[270px]">
                            <div className="flex items-center">
-                              <div className="w-[26px] h-[26px] bg-[#fff] border-[1.5px] border-[#c1c1c1] rounded-sm mr-2 shadow-inner cursor-pointer hover:border-[#b2b2b2] flex items-center justify-center"></div>
+                              <input type="checkbox" required className="w-[20px] h-[20px] mr-2 cursor-pointer" />
                               <span className="text-[13.5px] text-[#4d4d4d] font-sans">I'm not a robot</span>
                            </div>
                            <div className="flex flex-col items-center justify-center mr-1">
@@ -129,8 +165,8 @@ export default function Contact() {
                            </div>
                         </div>
 
-                        <button type="button" className="bg-[#e0141e] hover:bg-[#c9121a] text-white font-bold py-[9px] px-7 rounded-[4px] transition-colors self-start text-[14px] shadow-sm">
-                           Submit
+                        <button type="submit" disabled={loading} className={`bg-[#e0141e] hover:bg-[#c9121a] text-white font-bold py-[9px] px-7 rounded-[4px] transition-colors self-start text-[14px] shadow-sm ${loading ? 'opacity-70 cursor-not-allowed' : ''}`}>
+                           {loading ? 'Submitting...' : 'Submit'}
                         </button>
                      </div>
                   </form>

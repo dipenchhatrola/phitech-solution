@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
-import { Table, Tag, Button, Modal, Form, DatePicker, Select, Input, InputNumber, Space, message, Popconfirm } from "antd";
-import { PlusOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
+import { Table, Tag, Button, Modal, Form, DatePicker, Select, Input, InputNumber, Space, message, Popconfirm, Upload } from "antd";
+import { PlusOutlined, EditOutlined, DeleteOutlined, UploadOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import api from "../../utils/api";
 import { useMoulds } from "../../context/MouldContext";
@@ -17,6 +17,7 @@ export default function AdminMouldStatus() {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [form] = Form.useForm();
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [fileList, setFileList] = useState<any[]>([]);
 
   const analytics = useMemo(() => {
     const totalMoulds = moulds.length;
@@ -94,18 +95,35 @@ export default function AdminMouldStatus() {
       }
 
       const values = await form.validateFields();
-      if (values.startDate) values.startDate = values.startDate.toDate();
-      if (values.expectedCompletion) values.expectedCompletion = values.expectedCompletion.toDate();
-      console.log("Submitting Mould Data:", values);
+      
+      const formData = new FormData();
+      Object.keys(values).forEach(key => {
+        if (key === 'startDate' || key === 'expectedCompletion') {
+          if (values[key]) {
+            formData.append(key, values[key].toDate().toISOString());
+          }
+        } else if (values[key] !== undefined && values[key] !== null) {
+          formData.append(key, values[key]);
+        }
+      });
+
+      if (fileList.length > 0 && fileList[0].originFileObj) {
+        formData.append('image', fileList[0].originFileObj);
+      }
 
       if (editingId) {
-        await api.put(`/moulds/${editingId}`, values);
+        await api.put(`/moulds/${editingId}`, formData, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        });
         message.success("Mould updated successfully");
       } else {
-        await api.post("/moulds", values);
+        await api.post("/moulds", formData, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        });
         message.success("Mould created successfully");
       }
       setIsModalVisible(false);
+      setFileList([]);
       fetchData();
     } catch (error: any) {
       console.error("Failed:", error);
@@ -117,11 +135,27 @@ export default function AdminMouldStatus() {
 
   const columns = [
     {
-      title: 'Client Code',
-      dataIndex: 'clientId',
-      key: 'clientId',
+      title: 'Image',
+      dataIndex: 'image',
+      key: 'image',
+      render: (url: string) => url ? (
+        <img 
+          src={url.startsWith('http') ? url : `${(process.env.REACT_APP_BACKEND_URL || '').replace(/\/+$/, '')}${url.startsWith('/') ? url : '/' + url}`} 
+          alt="Mould" 
+          className="w-12 h-12 object-cover rounded shadow-sm border border-slate-100" 
+        />
+      ) : <div className="w-12 h-12 bg-slate-100 rounded flex items-center justify-center text-[10px] text-slate-400 text-center">No Image</div>,
+    },
+    {
+      title: 'Client Info',
+      key: 'clientInfo',
+      render: (_: any, record: any) => (
+        <div>
+          <div className="font-medium">{record.clientId}</div>
+          <div className="text-xs text-slate-500">{record.user?.clientName || 'N/A'} - {record.user?.city || 'N/A'}</div>
+        </div>
+      ),
       sorter: (a: any, b: any) => a.clientId.localeCompare(b.clientId),
-      // To add filtering for clientId we could add distinct client filters dynamically
     },
     {
       title: 'Product Name',
@@ -227,7 +261,7 @@ export default function AdminMouldStatus() {
             <h2 className="text-lg font-semibold">Mould Status</h2>
             <p className="text-sm text-slate-500">Overview of mould progress by client</p>
           </div>
-          <Button type="primary" icon={<PlusOutlined />} onClick={handleAdd}>Add Mould</Button>
+          <Button type="primary" icon={<PlusOutlined />} onClick={handleAdd}>Add Job</Button>
         </div>
 
         <Table
@@ -246,9 +280,22 @@ export default function AdminMouldStatus() {
               (option?.children as unknown as string).toLowerCase().includes(input.toLowerCase())
             }>
               {clients.map((client: any) => (
-                <Option key={client._id} value={client.clientId}>{client.clientId} - {client.mobile}</Option>
+                <Option key={client._id} value={client.clientId}>
+                  {client.clientId} - {client.clientName || 'N/A'} ({client.city || 'N/A'})
+                </Option>
               ))}
             </Select>
+          </Form.Item>
+          <Form.Item label="Mould Image">
+            <Upload
+              listType="picture"
+              maxCount={1}
+              fileList={fileList}
+              onChange={({ fileList }) => setFileList(fileList)}
+              beforeUpload={() => false}
+            >
+              <Button icon={<UploadOutlined />}>Select Image</Button>
+            </Upload>
           </Form.Item>
           <Form.Item name="productId" label="Product Name" rules={[{ required: true, message: "Please select or enter a product name" }]}>
             <Select
