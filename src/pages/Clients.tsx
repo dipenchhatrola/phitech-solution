@@ -31,12 +31,7 @@ export default function Clients() {
   }, []);
 
   const getFullUrl = (url: string) => {
-    if (!url) return url;
-    if (/^https?:\/\//i.test(url)) return url;
-    const base = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5001';
-    const normalizedBase = base.replace(/\/+$/, '');
-    const normalizedPath = url.startsWith('/') ? url : `/${url}`;
-    return `${normalizedBase}${normalizedPath}`;
+    return url;
   };
 
   return (

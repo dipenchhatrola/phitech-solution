@@ -21,12 +21,7 @@ export default function AdminProducts() {
     : backendBase;
 
   const buildPhotoUrl = (photoUrl: string) => {
-    if (!photoUrl) return "";
-    if (/^https?:\/\//i.test(photoUrl)) return photoUrl;
-    if (photoUrl.startsWith("/")) {
-      return `${normalizedBackendBase}${photoUrl}`;
-    }
-    return `${normalizedBackendBase}/${photoUrl}`;
+    return photoUrl;
   };
 
   useEffect(() => {

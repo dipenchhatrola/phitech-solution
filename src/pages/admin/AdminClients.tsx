@@ -19,12 +19,7 @@ export default function AdminClients() {
     : backendBase;
 
   const buildImageUrl = (url: string) => {
-    if (!url) return "";
-    if (/^https?:\/\//i.test(url)) return url;
-    if (url.startsWith("/")) {
-      return `${normalizedBackendBase}${url}`;
-    }
-    return `${normalizedBackendBase}/${url}`;
+    return url;
   };
 
   useEffect(() => {

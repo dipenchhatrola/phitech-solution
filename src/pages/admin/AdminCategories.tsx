@@ -95,7 +95,7 @@ export default function AdminCategories() {
       key: 'image',
       render: (url: string) => url ? (
         <img 
-          src={url.startsWith('http') ? url : `${(process.env.REACT_APP_BACKEND_URL || '').replace(/\/+$/, '')}${url.startsWith('/') ? url : '/' + url}`} 
+          src={url} 
           alt="Category" 
           className="w-12 h-12 object-cover rounded shadow-sm border border-slate-100" 
         />

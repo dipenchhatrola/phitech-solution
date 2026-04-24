@@ -135,7 +135,7 @@ export default function Dashboard() {
             <AnimatePresence>
               {data.map((item, index) => {
                 const visual = getStatusVisuals(item.status);
-                const mouldImage = item.image ? (item.image.startsWith('http') ? item.image : `${(process.env.REACT_APP_BACKEND_URL || '').replace(/\/+$/, '')}${item.image.startsWith('/') ? item.image : '/' + item.image}`) : null;
+                const mouldImage = item.image;
                 const imageUrl = mouldImage || getProductImage(item.productId);
                 const percentage = typeof item.percentage === "number" ? item.percentage : visual.progress;
                 
