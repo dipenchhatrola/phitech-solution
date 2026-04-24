@@ -54,10 +54,7 @@ export default function Dashboard() {
     if (matchedProduct && matchedProduct.photos && matchedProduct.photos.length > 0) {
       const url = matchedProduct.photos[0];
       if (/^https?:\/\//i.test(url)) return url;
-      const base = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5001';
-      const normalizedBase = base.replace(/\/+$/, '');
-      const normalizedPath = url.startsWith('/') ? url : `/${url}`;
-      return `${normalizedBase}${normalizedPath}`;
+      return url;
     }
     return "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&auto=format&fit=crop"; // Default placeholder
   };

@@ -13,15 +13,6 @@ export default function AdminClients() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [fileList, setFileList] = useState<any[]>([]);
 
-  const backendBase = process.env.REACT_APP_BACKEND_URL || "";
-  const normalizedBackendBase = backendBase.endsWith("/")
-    ? backendBase.slice(0, -1)
-    : backendBase;
-
-  const buildImageUrl = (url: string) => {
-    return url;
-  };
-
   useEffect(() => {
     fetchClients();
   }, []);
@@ -114,7 +105,7 @@ export default function AdminClients() {
         if (!image) return <span className="text-xs text-gray-400">No image</span>;
         return (
           <img
-            src={buildImageUrl(image)}
+            src={image}
             alt="Client"
             width={40}
             height={40}

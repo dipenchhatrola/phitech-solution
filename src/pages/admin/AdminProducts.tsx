@@ -15,15 +15,6 @@ export default function AdminProducts() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [fileList, setFileList] = useState<any[]>([]);
   
-  const backendBase = process.env.REACT_APP_BACKEND_URL || "";
-  const normalizedBackendBase = backendBase.endsWith("/")
-    ? backendBase.slice(0, -1)
-    : backendBase;
-
-  const buildPhotoUrl = (photoUrl: string) => {
-    return photoUrl;
-  };
-
   useEffect(() => {
     fetchProducts();
     fetchCategories();
@@ -144,7 +135,7 @@ export default function AdminProducts() {
               {list.slice(0, 3).map((src: string, index: number) => (
                 <Image
                   key={index}
-                  src={buildPhotoUrl(src)}
+                  src={src}
                   width={40}
                   height={40}
                   style={{ objectFit: "cover", borderRadius: 4 }}

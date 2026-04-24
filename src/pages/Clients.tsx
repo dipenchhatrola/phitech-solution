@@ -30,10 +30,6 @@ export default function Clients() {
     fetchClients();
   }, []);
 
-  const getFullUrl = (url: string) => {
-    return url;
-  };
-
   return (
     <section className="py-12 md:py-20 bg-white">
       <div className="container-custom mx-auto px-4 max-w-[1240px]">
@@ -69,7 +65,7 @@ export default function Clients() {
                  className="bg-white border border-[#eaeaea] rounded-md h-[85px] sm:h-[100px] flex items-center justify-center p-3 hover:shadow-lg transition-shadow cursor-pointer group overflow-hidden"
                >
                  <img 
-                   src={getFullUrl(client.image)} 
+                   src={client.image} 
                    alt={client.name} 
                    className="max-w-[85%] max-h-[85%] object-contain grayscale opacity-60 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-300 ease-in-out transform group-hover:scale-105"
                    loading="lazy"

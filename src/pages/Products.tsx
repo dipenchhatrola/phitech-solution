@@ -40,10 +40,6 @@ export default function Products() {
      fetchData();
    }, []);
 
-   const getFullUrl = (url: string) => {
-     return url;
-   };
-
    const filteredProducts = activeCategory === 'all' 
      ? products 
      : products.filter(p => p.category && (p.category._id === activeCategory || p.category === activeCategory));
@@ -102,7 +98,7 @@ export default function Products() {
                    >
                       <div className="h-64 bg-slate-200 flex items-center justify-center relative overflow-hidden">
                          {product.photos && product.photos.length > 0 ? (
-                           <img src={getFullUrl(product.photos[0])} alt={product.name} className="w-full h-full object-cover transition-transform group-hover:scale-105 duration-500" />
+                           <img src={product.photos[0]} alt={product.name} className="w-full h-full object-cover transition-transform group-hover:scale-105 duration-500" />
                          ) : (
                            <span className="text-slate-400 z-10 transition-transform group-hover:scale-105 duration-500">{product.name} Image</span>
                          )}
@@ -146,7 +142,7 @@ export default function Products() {
                          <div key={index} className="aspect-square rounded-lg overflow-hidden bg-slate-100 border border-slate-200 shadow-sm relative group cursor-pointer">
                             <div className="w-full h-full transform transition-transform duration-500 group-hover:scale-110">
                                 <Image 
-                                   src={getFullUrl(photo)} 
+                                   src={photo} 
                                    alt={`${activeProduct.name} ${index + 1}`}
                                    className="object-cover w-full h-full"
                                 />
