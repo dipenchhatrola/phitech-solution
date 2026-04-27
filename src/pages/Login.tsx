@@ -18,6 +18,7 @@ export default function Login() {
       const response = await api.post("/auth/login", { city, clientId: code });
       localStorage.setItem("clientToken", response.data.token);
       localStorage.setItem("clientCode", code);
+      localStorage.setItem("clientName", response.data.clientName || code);
       navigate("/dashboard");
     } catch (err: any) {
       setError(err.response?.data?.message || "Invalid credentials");

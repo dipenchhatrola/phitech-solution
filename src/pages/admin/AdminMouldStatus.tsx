@@ -19,6 +19,58 @@ export default function AdminMouldStatus() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [fileList, setFileList] = useState<any[]>([]);
 
+  const [selectedClientFilter, setSelectedClientFilter] = useState<string | undefined>(undefined);
+  const [customStatuses, setCustomStatuses] = useState<string[]>(() => {
+    const saved = localStorage.getItem('customMouldStatuses');
+    return saved ? JSON.parse(saved) : [];
+  });
+  const [newStatusName, setNewStatusName] = useState("");
+
+  useEffect(() => {
+    localStorage.setItem('customMouldStatuses', JSON.stringify(customStatuses));
+  }, [customStatuses]);
+
+  const defaultStatuses = ["Pending", "In Machine", "Completed"];
+  const allStatuses = Array.from(new Set([...defaultStatuses, ...customStatuses]));
+
+  const handleAddStatus = (e?: React.MouseEvent | React.KeyboardEvent) => {
+    e?.preventDefault();
+    const trimmed = newStatusName.trim();
+    if (trimmed && !allStatuses.includes(trimmed)) {
+      setCustomStatuses([...customStatuses, trimmed]);
+      setNewStatusName("");
+    }
+  };
+
+  const handleDeleteStatus = (e: React.MouseEvent, statusToDelete: string) => {
+    e.stopPropagation();
+    e.preventDefault();
+    setCustomStatuses(customStatuses.filter(s => s !== statusToDelete));
+  };
+
+  const renderStatusDropdown = (menu: React.ReactElement) => (
+    <div>
+      {menu}
+      <div className="px-3 py-2 border-t border-slate-100 flex gap-2 items-center">
+        <Input
+          placeholder="New status"
+          size="small"
+          value={newStatusName}
+          onChange={(e) => setNewStatusName(e.target.value)}
+          onPressEnter={handleAddStatus}
+          onKeyDown={(e) => e.stopPropagation()}
+          onClick={(e) => e.stopPropagation()}
+        />
+        <Button type="primary" size="small" onClick={handleAddStatus}>Add</Button>
+      </div>
+    </div>
+  );
+
+  const filteredMoulds = useMemo(() => {
+    if (!selectedClientFilter) return moulds;
+    return moulds.filter((m: any) => m.clientId === selectedClientFilter);
+  }, [moulds, selectedClientFilter]);
+
   const analytics = useMemo(() => {
     const totalMoulds = moulds.length;
     const statusCounts = moulds.reduce((acc: any, mould: any) => {
@@ -166,18 +218,30 @@ export default function AdminMouldStatus() {
       title: 'Status',
       dataIndex: 'status',
       key: 'status',
-      filters: [
-        { text: 'Pending', value: 'Pending' },
-        { text: 'In Machine', value: 'In Machine' },
-        { text: 'Completed', value: 'Completed' },
-      ],
+      filters: allStatuses.map(s => ({ text: s, value: s })),
       onFilter: (value: any, record: any) => record.status === value,
       render: (status: string, record: any) => {
         return (
-          <Select size="small" value={status} style={{ width: 120 }} onChange={(val) => handleUpdateMould(record._id, { status: val })}>
-            <Option value="Pending"><Tag color="gold">Pending</Tag></Option>
-            <Option value="In Machine"><Tag color="blue">In Machine</Tag></Option>
-            <Option value="Completed"><Tag color="green">Completed</Tag></Option>
+          <Select 
+            size="small" 
+            value={status} 
+            style={{ width: 130 }} 
+            onChange={(val) => handleUpdateMould(record._id, { status: val })}
+            dropdownRender={renderStatusDropdown}
+          >
+            {allStatuses.map(s => (
+              <Option key={s} value={s}>
+                <div className="flex justify-between items-center w-full">
+                  <span>{s === 'In Machine' ? <Tag color="blue">{s}</Tag> : s === 'Pending' ? <Tag color="gold">{s}</Tag> : s === 'Completed' ? <Tag color="green">{s}</Tag> : <Tag color="default">{s}</Tag>}</span>
+                  {!defaultStatuses.includes(s) && (
+                    <DeleteOutlined 
+                      className="text-red-400 hover:text-red-600 ml-2" 
+                      onClick={(e: any) => handleDeleteStatus(e, s)} 
+                    />
+                  )}
+                </div>
+              </Option>
+            ))}
           </Select>
         );
       },
@@ -261,12 +325,31 @@ export default function AdminMouldStatus() {
             <h2 className="text-lg font-semibold">Mould Status</h2>
             <p className="text-sm text-slate-500">Overview of mould progress by client</p>
           </div>
-          <Button type="primary" icon={<PlusOutlined />} onClick={handleAdd}>Add Job</Button>
+          <div className="flex gap-4 items-center">
+            <Select
+              showSearch
+              allowClear
+              placeholder="Filter by Client"
+              style={{ width: 200 }}
+              value={selectedClientFilter}
+              onChange={setSelectedClientFilter}
+              filterOption={(input, option) =>
+                (option?.children as unknown as string).toLowerCase().includes(input.toLowerCase())
+              }
+            >
+              {clients.map((client: any) => (
+                <Option key={client._id} value={client.clientId}>
+                  {client.clientName ? `${client.clientId} - ${client.clientName}` : client.clientId}
+                </Option>
+              ))}
+            </Select>
+            <Button type="primary" icon={<PlusOutlined />} onClick={handleAdd}>Add Job</Button>
+          </div>
         </div>
 
         <Table
           columns={columns}
-          dataSource={moulds}
+          dataSource={filteredMoulds}
           rowKey="_id"
           loading={loading}
           pagination={{ pageSize: 10 }}
@@ -369,10 +452,20 @@ export default function AdminMouldStatus() {
             <DatePicker style={{ width: '100%' }} />
           </Form.Item>
           <Form.Item name="status" label="Status" initialValue="Pending">
-            <Select>
-              <Option value="Pending">Pending</Option>
-              <Option value="In Machine">In Machine</Option>
-              <Option value="Completed">Completed</Option>
+            <Select dropdownRender={renderStatusDropdown}>
+              {allStatuses.map(s => (
+                <Option key={s} value={s}>
+                  <div className="flex justify-between items-center w-full">
+                    <span>{s}</span>
+                    {!defaultStatuses.includes(s) && (
+                      <DeleteOutlined 
+                        className="text-red-400 hover:text-red-600 ml-2" 
+                        onClick={(e: any) => handleDeleteStatus(e, s)} 
+                      />
+                    )}
+                  </div>
+                </Option>
+              ))}
             </Select>
           </Form.Item>
         </Form>

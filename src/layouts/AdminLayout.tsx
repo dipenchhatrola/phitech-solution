@@ -84,7 +84,19 @@ export default function AdminLayout() {
                 }`
               }
             >
-              Clients
+              Testimonials
+            </NavLink>
+            <NavLink
+              to="/admin/settings"
+              className={({ isActive }) =>
+                `${navBase} ${
+                  isActive
+                    ? "bg-slate-800 text-white"
+                    : "text-slate-300 hover:bg-slate-800/60 hover:text-white"
+                }`
+              }
+            >
+              Settings
             </NavLink>
           </nav>
 

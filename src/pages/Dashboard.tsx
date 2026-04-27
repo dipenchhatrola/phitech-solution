@@ -18,6 +18,7 @@ const itemVariants = {
 
 export default function Dashboard() {
   const [clientCode, setClientCode] = useState("");
+  const [clientName, setClientName] = useState("");
   const [data, setData] = useState<any[]>([]);
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -25,9 +26,11 @@ export default function Dashboard() {
 
   useEffect(() => {
     const code = localStorage.getItem("clientCode");
+    const name = localStorage.getItem("clientName");
     const token = localStorage.getItem("clientToken");
     if (code && token) {
       setClientCode(code);
+      setClientName(name || code);
       fetchDashboardData();
     } else {
       navigate("/login");
@@ -72,6 +75,12 @@ export default function Dashboard() {
     }
   };
 
+  const overviewCounts = data.reduce((acc, curr) => {
+    const s = curr.status || "Pending";
+    acc[s] = (acc[s] || 0) + 1;
+    return acc;
+  }, {} as Record<string, number>);
+
   return (
     <div className="min-h-screen bg-slate-50 relative overflow-hidden">
       {/* Decorative Background */}
@@ -86,15 +95,24 @@ export default function Dashboard() {
         >
           <div>
             <h2 className="text-3xl md:text-4xl font-display font-bold text-slate-800 mb-2 mt-4 md:mt-0">
-              Welcome back, <span className="text-brand-600">{clientCode}</span>
+              Welcome back, <span className="text-brand-600">{clientName || clientCode}</span>
             </h2>
             <p className="text-slate-500 text-lg">Track your mould manufacturing progress in real-time.</p>
           </div>
-          <div className="flex gap-4">
-            <div className="bg-white px-6 py-3 rounded-2xl shadow-sm border border-slate-100 text-center">
+          <div className="flex flex-wrap gap-4 mt-6 md:mt-0">
+            <div className="bg-white px-6 py-3 rounded-2xl shadow-sm border border-slate-100 text-center min-w-[120px]">
               <p className="text-sm text-slate-400 font-medium">Active Moulds</p>
               <p className="text-2xl font-bold text-slate-800">{data.length}</p>
             </div>
+            {Object.entries(overviewCounts).map(([status, count]) => {
+              const visual = getStatusVisuals(status);
+              return (
+                <div key={status} className={`px-6 py-3 rounded-2xl shadow-sm border ${visual.color} text-center min-w-[120px]`}>
+                  <p className="text-sm font-medium opacity-80">{status}</p>
+                  <p className="text-2xl font-bold">{String(count)}</p>
+                </div>
+              );
+            })}
           </div>
         </motion.div>
 

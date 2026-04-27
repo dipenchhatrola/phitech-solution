@@ -22,8 +22,7 @@ export default function AdminClients() {
       const response = await api.get("/clients");
       setClients(response.data);
     } catch (error) {
-      console.error(error);
-      message.error("Failed to load clients");
+      message.error("Failed to load testimonials");
     } finally {
       setLoading(false);
     }
@@ -49,10 +48,10 @@ export default function AdminClients() {
   const handleDelete = async (id: string) => {
     try {
       await api.delete(`/clients/${id}`);
-      message.success("Client deleted successfully");
+      message.success("Testimonial deleted successfully");
       fetchClients();
     } catch (error) {
-      message.error("Failed to delete client");
+      message.error("Failed to delete testimonial");
     }
   };
 
@@ -75,18 +74,18 @@ export default function AdminClients() {
         await api.put(`/clients/${editingId}`, formData, {
           headers: { 'Content-Type': 'multipart/form-data' }
         });
-        message.success("Client updated successfully");
+        message.success("Testimonial updated successfully");
       } else {
         await api.post("/clients", formData, {
           headers: { 'Content-Type': 'multipart/form-data' }
         });
-        message.success("Client created successfully");
+        message.success("Testimonial created successfully");
       }
       setIsModalVisible(false);
       fetchClients();
     } catch (error: any) {
       console.log("Failed:", error);
-      message.error(error.response?.data?.message || "Failed to save client");
+      message.error(error.response?.data?.message || "Failed to save testimonial");
     }
   };
 
@@ -106,7 +105,7 @@ export default function AdminClients() {
         return (
           <img
             src={image}
-            alt="Client"
+            alt="Testimonial"
             width={40}
             height={40}
             style={{ objectFit: "contain", borderRadius: 4 }}
@@ -138,11 +137,11 @@ export default function AdminClients() {
     <div className="space-y-6">
       <div className="flex justify-between items-center bg-white border border-slate-200 p-6 rounded-xl">
         <div>
-            <h2 className="text-lg font-semibold">Clients Management</h2>
-            <p className="text-sm text-slate-500">Manage client logos and links</p>
+            <h2 className="text-lg font-semibold">Testimonials Management</h2>
+            <p className="text-sm text-slate-500">Manage testimonial logos and links</p>
         </div>
         <Button type="primary" icon={<PlusOutlined />} onClick={handleAdd}>
-          Add Client
+          Add Testimonial
         </Button>
       </div>
 
@@ -156,10 +155,10 @@ export default function AdminClients() {
         />
       </div>
 
-      <Modal title={editingId ? "Edit Client" : "Add Client"} open={isModalVisible} onOk={handleOk} onCancel={() => setIsModalVisible(false)} width={600}>
+      <Modal title={editingId ? "Edit Testimonial" : "Add Testimonial"} open={isModalVisible} onOk={handleOk} onCancel={() => setIsModalVisible(false)} width={600}>
         <Form form={form} layout="vertical">
-          <Form.Item name="name" label="Client Name" rules={[{ required: true }]}>
-            <Input placeholder="Enter client name" />
+          <Form.Item name="name" label="Testimonial Name" rules={[{ required: true }]}>
+            <Input placeholder="Enter testimonial name" />
           </Form.Item>
           <Form.Item name="link" label="Website Link (Optional)">
             <Input placeholder="Enter URL (https://...)" />
