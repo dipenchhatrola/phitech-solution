@@ -204,15 +204,20 @@ export default function AdminMouldStatus() {
       }
     },
     {
-      title: 'Client Info',
-      key: 'clientInfo',
+      title: 'Client Code',
+      dataIndex: 'clientId',
+      key: 'clientId',
+      sorter: (a: any, b: any) => a.clientId.localeCompare(b.clientId),
+    },
+    {
+      title: 'Client Name',
+      key: 'clientName',
       render: (_: any, record: any) => (
-        <div>
-          <div className="font-medium">{record.clientId}</div>
-          <div className="text-xs text-slate-500">{record.user?.clientName || 'N/A'} - {record.user?.city || 'N/A'}</div>
+        <div className="text-sm">
+          <div className="font-medium">{record.user?.clientName || 'N/A'}</div>
+          <div className="text-[10px] text-slate-400">{record.user?.city || 'N/A'}</div>
         </div>
       ),
-      sorter: (a: any, b: any) => a.clientId.localeCompare(b.clientId),
     },
     {
       title: 'Product Name',

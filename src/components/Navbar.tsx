@@ -126,13 +126,22 @@ export default function Navbar() {
           {/* Desktop Right Side Colmkjkhuyn */}
           <div className="hidden lg:flex flex-col flex-grow justify-center ml-6 xl:ml-10">
 
-            {/* Top Row: Contact Info & Socials */}
-            <div className="flex justify-end items-center pb-2 mb-2 border-b border-slate-100 space-x-5 text-xs text-slate-600">
-              <a href={`tel:${settings?.mobileNumber || '+91 94287 35418'}`} className="flex items-center space-x-1.5 hover:text-brand-600 transition-colors">
+            {/* Top Row: Contact Info & Socials - Hidden on scroll */}
+            <motion.div 
+              animate={{ 
+                height: scrolled ? 0 : "auto", 
+                opacity: scrolled ? 0 : 1,
+                marginBottom: scrolled ? 0 : 8,
+                paddingBottom: scrolled ? 0 : 8
+              }}
+              transition={{ duration: 0.3 }}
+              className="flex justify-end items-center border-b border-slate-100 space-x-5 text-xs text-slate-600 overflow-hidden shrink-0"
+            >
+              <a href={`tel:${settings?.mobileNumber || '+91 94287 35418'}`} className="flex items-center space-x-1.5 hover:text-brand-600 transition-colors whitespace-nowrap">
                 <PhoneIcon className="text-slate-400 w-3 h-3" />
                 <span className="font-semibold text-slate-700">{settings?.mobileNumber || '+91 94287 35418'}</span>
               </a>
-              <a href={`tel:${settings?.contactNumber || '+91 90339 67360'}`} className="flex items-center space-x-1.5 hover:text-brand-600 transition-colors">
+              <a href={`tel:${settings?.contactNumber || '+91 90339 67360'}`} className="flex items-center space-x-1.5 hover:text-brand-600 transition-colors whitespace-nowrap">
                 <PhoneIcon className="text-slate-400 w-3 h-3" />
                 <span className="font-semibold text-slate-700">{settings?.contactNumber || '+91 90339 67360'}</span>
               </a>
@@ -152,7 +161,7 @@ export default function Navbar() {
               <div className="border-l border-slate-200 pl-4 flex items-center h-full">
                 <div id="google_translate_element" className="h-6 overflow-hidden flex items-center pt-1 scale-90 origin-right"></div>
               </div>
-            </div>
+            </motion.div>
 
             {/* Bottom Row: Desktop Navigation */}
             <div className="flex justify-end items-center space-x-1 lg:space-x-3 xl:space-x-5">
