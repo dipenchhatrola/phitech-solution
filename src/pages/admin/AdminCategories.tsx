@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
-import { Table, Button, Modal, Form, Input, Space, Popconfirm, message, Upload } from "antd";
+import { Table, Button, Modal, Form, Input, Space, Popconfirm, message, Upload, Image } from "antd";
 import { PlusOutlined, DeleteOutlined, EditOutlined, UploadOutlined } from "@ant-design/icons";
 import api from "../../utils/api";
+import ImageUploadBox from "../../components/admin/ImageUploadBox";
 
 export default function AdminCategories() {
   const [categories, setCategories] = useState<any[]>([]);
@@ -47,7 +48,11 @@ export default function AdminCategories() {
   const handleEdit = (record: any) => {
     setEditingId(record._id);
     form.setFieldsValue(record);
-    setFileList([]);
+    if (record.image) {
+      setFileList([{ uid: '-1', name: 'image.png', status: 'done', url: record.image }]);
+    } else {
+      setFileList([]);
+    }
     setIsModalVisible(true);
   };
 
@@ -93,13 +98,17 @@ export default function AdminCategories() {
       title: 'Image',
       dataIndex: 'image',
       key: 'image',
-      render: (url: string) => url ? (
-        <img 
-          src={url} 
-          alt="Category" 
-          className="w-12 h-12 object-cover rounded shadow-sm border border-slate-100" 
-        />
-      ) : <div className="w-12 h-12 bg-slate-100 rounded flex items-center justify-center text-[10px] text-slate-400 text-center">No Image</div>,
+      render: (url: string) => {
+        if (!url) return <span className="text-xs text-gray-400">No image</span>;
+        return (
+          <Image
+            src={url}
+            width={40}
+            height={40}
+            style={{ objectFit: "cover", borderRadius: 4 }}
+          />
+        );
+      }
     },
     {
       title: 'Name',
@@ -160,15 +169,7 @@ export default function AdminCategories() {
             <Input placeholder="Enter category name" />
           </Form.Item>
           <Form.Item label="Category Image" required={!editingId}>
-            <Upload
-              listType="picture"
-              maxCount={1}
-              fileList={fileList}
-              onChange={({ fileList }) => setFileList(fileList)}
-              beforeUpload={() => false}
-            >
-              <Button icon={<UploadOutlined />}>Select Image</Button>
-            </Upload>
+            <ImageUploadBox fileList={fileList} setFileList={setFileList} maxCount={1} />
           </Form.Item>
           <Form.Item name="description" label="Description">
             <Input.TextArea placeholder="Enter description" />

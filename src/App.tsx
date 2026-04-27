@@ -11,6 +11,7 @@ import Clients from "./pages/Clients";
 import Contact from "./pages/Contact";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
+import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminLogin from "./pages/admin/AdminLogin";
 import AdminMouldStatus from "./pages/admin/AdminMouldStatus";
 import AdminUsers from "./pages/admin/AdminUsers";
@@ -47,7 +48,8 @@ function App() {
             </AdminRoute>
           }
         >
-          <Route index element={<AdminMouldStatus />} />
+          <Route index element={<AdminDashboard />} />
+          <Route path="mould-status" element={<AdminMouldStatus />} />
           <Route path="users" element={<AdminUsers />} />
           <Route path="categories" element={<AdminCategories />} />
           <Route path="products" element={<AdminProducts />} />

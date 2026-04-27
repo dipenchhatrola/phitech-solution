@@ -1,9 +1,10 @@
 import { useState, useEffect, useMemo } from "react";
-import { Table, Tag, Button, Modal, Form, DatePicker, Select, Input, InputNumber, Space, message, Popconfirm, Upload } from "antd";
+import { Table, Tag, Button, Modal, Form, DatePicker, Select, Input, InputNumber, Space, message, Popconfirm, Upload, Image } from "antd";
 import { PlusOutlined, EditOutlined, DeleteOutlined, UploadOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import api from "../../utils/api";
 import { useMoulds } from "../../context/MouldContext";
+import ImageUploadBox from "../../components/admin/ImageUploadBox";
 
 const { Option } = Select;
 
@@ -190,13 +191,17 @@ export default function AdminMouldStatus() {
       title: 'Image',
       dataIndex: 'image',
       key: 'image',
-      render: (url: string) => url ? (
-        <img 
-          src={url} 
-          alt="Mould" 
-          className="w-12 h-12 object-cover rounded shadow-sm border border-slate-100" 
-        />
-      ) : <div className="w-12 h-12 bg-slate-100 rounded flex items-center justify-center text-[10px] text-slate-400 text-center">No Image</div>,
+      render: (url: string) => {
+        if (!url) return <span className="text-xs text-gray-400">No image</span>;
+        return (
+          <Image
+            src={url}
+            width={40}
+            height={40}
+            style={{ objectFit: "cover", borderRadius: 4 }}
+          />
+        );
+      }
     },
     {
       title: 'Client Info',
@@ -225,7 +230,7 @@ export default function AdminMouldStatus() {
           <Select 
             size="small" 
             value={status} 
-            style={{ width: 130 }} 
+            style={{ width: 170 }} 
             onChange={(val) => handleUpdateMould(record._id, { status: val })}
             dropdownRender={renderStatusDropdown}
           >
@@ -286,6 +291,11 @@ export default function AdminMouldStatus() {
             setEditingId(record._id);
             form.setFieldsValue({ ...record, startDate: dayjs(record.startDate), expectedCompletion: dayjs(record.expectedCompletion) });
             setCustomProductName("");
+            if (record.image) {
+              setFileList([{ uid: '-1', name: 'mould.png', status: 'done', url: record.image }]);
+            } else {
+              setFileList([]);
+            }
             setIsModalVisible(true);
           }} />
           <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record._id)}>
@@ -370,15 +380,7 @@ export default function AdminMouldStatus() {
             </Select>
           </Form.Item>
           <Form.Item label="Mould Image">
-            <Upload
-              listType="picture"
-              maxCount={1}
-              fileList={fileList}
-              onChange={({ fileList }) => setFileList(fileList)}
-              beforeUpload={() => false}
-            >
-              <Button icon={<UploadOutlined />}>Select Image</Button>
-            </Upload>
+            <ImageUploadBox fileList={fileList} setFileList={setFileList} maxCount={1} />
           </Form.Item>
           <Form.Item name="productId" label="Product Name" rules={[{ required: true, message: "Please select or enter a product name" }]}>
             <Select
@@ -432,6 +434,8 @@ export default function AdminMouldStatus() {
               const status = getFieldValue('status');
               if (status === 'Completed' && getFieldValue('percentage') !== 100) {
                 setFieldsValue({ percentage: 100 });
+              } else if (status === 'Pending' && getFieldValue('percentage') !== 0) {
+                setFieldsValue({ percentage: 0 });
               }
               return (
                 <Form.Item name="percentage" label="Percentage (%)" rules={[{ required: true }]}>
@@ -445,11 +449,60 @@ export default function AdminMouldStatus() {
               );
             }}
           </Form.Item>
-          <Form.Item name="startDate" label="Start Date" rules={[{ required: true }]}>
-            <DatePicker style={{ width: '100%' }} />
+          <Form.Item noStyle dependencies={['expectedCompletion']}>
+            {({ getFieldValue }) => (
+              <Form.Item 
+                name="startDate" 
+                label="Start Date" 
+                rules={[
+                  { required: true, message: 'Please select a start date' },
+                  ({ getFieldValue }) => ({
+                    validator(_, value) {
+                      if (!value || !getFieldValue('expectedCompletion')) return Promise.resolve();
+                      if (value.isAfter(getFieldValue('expectedCompletion'), 'day')) return Promise.reject(new Error('Start date cannot be after end date!'));
+                      return Promise.resolve();
+                    },
+                  }),
+                ]}
+              >
+                <DatePicker 
+                  style={{ width: '100%' }} 
+                  format="DD-MM-YYYY"
+                  disabledDate={(current) => {
+                    const expectedCompletion = getFieldValue('expectedCompletion');
+                    return expectedCompletion ? current.isAfter(expectedCompletion, 'day') : false;
+                  }}
+                />
+              </Form.Item>
+            )}
           </Form.Item>
-          <Form.Item name="expectedCompletion" label="Expected Completion Date" rules={[{ required: true }]}>
-            <DatePicker style={{ width: '100%' }} />
+          
+          <Form.Item noStyle dependencies={['startDate']}>
+            {({ getFieldValue }) => (
+              <Form.Item 
+                name="expectedCompletion" 
+                label="Expected Completion Date" 
+                rules={[
+                  { required: true, message: 'Please select an expected completion date' },
+                  ({ getFieldValue }) => ({
+                    validator(_, value) {
+                      if (!value || !getFieldValue('startDate')) return Promise.resolve();
+                      if (value.isBefore(getFieldValue('startDate'), 'day')) return Promise.reject(new Error('End date cannot be before start date!'));
+                      return Promise.resolve();
+                    },
+                  }),
+                ]}
+              >
+                <DatePicker 
+                  style={{ width: '100%' }} 
+                  format="DD-MM-YYYY"
+                  disabledDate={(current) => {
+                    const startDate = getFieldValue('startDate');
+                    return startDate ? current.isBefore(startDate, 'day') : false;
+                  }}
+                />
+              </Form.Item>
+            )}
           </Form.Item>
           <Form.Item name="status" label="Status" initialValue="Pending">
             <Select dropdownRender={renderStatusDropdown}>

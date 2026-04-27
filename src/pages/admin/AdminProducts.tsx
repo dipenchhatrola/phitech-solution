@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Table, Button, Modal, Form, Input, Space, Popconfirm, message, Upload, Switch, Image, Select, Tag } from "antd";
 import { PlusOutlined, DeleteOutlined, InboxOutlined, EditOutlined } from "@ant-design/icons";
 import api from "../../utils/api";
+import ImageUploadBox from "../../components/admin/ImageUploadBox";
 
 const { Dragger } = Upload;
 const { Option } = Select;
@@ -54,7 +55,16 @@ export default function AdminProducts() {
         ...record,
         category: record.category?._id
     });
-    setFileList([]); // Note: In a real app, you'd show existing images
+    if (record.photos && record.photos.length > 0) {
+      setFileList(record.photos.map((url: string, idx: number) => ({
+        uid: `-${idx}`,
+        name: `photo-${idx}.png`,
+        status: 'done',
+        url
+      })));
+    } else {
+      setFileList([]);
+    }
     setIsModalVisible(true);
   };
 
@@ -210,17 +220,8 @@ export default function AdminProducts() {
           <Form.Item name="isPublic" label="Show on Website" valuePropName="checked" initialValue={true}>
             <Switch />
           </Form.Item>
-          <Form.Item label="Upload Photos">
-            <Dragger
-              multiple
-              listType="picture"
-              fileList={fileList}
-              onChange={(info) => setFileList(info.fileList)}
-              beforeUpload={() => false}
-            >
-              <p className="ant-upload-drag-icon"><InboxOutlined /></p>
-              <p className="ant-upload-text">Click or drag images to upload</p>
-            </Dragger>
+          <Form.Item label="Upload Photos" required={!editingId}>
+            <ImageUploadBox fileList={fileList} setFileList={setFileList} maxCount={5} multiple={true} />
           </Form.Item>
         </Form>
       </Modal>

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { Table, Button, Modal, Form, Input, Space, Popconfirm, message, Upload } from "antd";
+import { Table, Button, Modal, Form, Input, Space, Popconfirm, message, Upload, Image } from "antd";
 import { PlusOutlined, DeleteOutlined, InboxOutlined, EditOutlined } from "@ant-design/icons";
 import api from "../../utils/api";
+import ImageUploadBox from "../../components/admin/ImageUploadBox";
 
 const { Dragger } = Upload;
 
@@ -41,7 +42,11 @@ export default function AdminClients() {
         name: record.name,
         link: record.link
     });
-    setFileList([]);
+    if (record.image) {
+      setFileList([{ uid: '-1', name: 'logo.png', status: 'done', url: record.image }]);
+    } else {
+      setFileList([]);
+    }
     setIsModalVisible(true);
   };
 
@@ -103,12 +108,11 @@ export default function AdminClients() {
       render: (image: string) => {
         if (!image) return <span className="text-xs text-gray-400">No image</span>;
         return (
-          <img
+          <Image
             src={image}
-            alt="Testimonial"
             width={40}
             height={40}
-            style={{ objectFit: "contain", borderRadius: 4 }}
+            style={{ objectFit: "cover", borderRadius: 4 }}
           />
         );
       }
@@ -163,17 +167,8 @@ export default function AdminClients() {
           <Form.Item name="link" label="Website Link (Optional)">
             <Input placeholder="Enter URL (https://...)" />
           </Form.Item>
-          <Form.Item label="Upload Logo">
-            <Dragger
-              maxCount={1}
-              listType="picture"
-              fileList={fileList}
-              onChange={(info) => setFileList(info.fileList)}
-              beforeUpload={() => false}
-            >
-              <p className="ant-upload-drag-icon"><InboxOutlined /></p>
-              <p className="ant-upload-text">Click or drag image to upload</p>
-            </Dragger>
+          <Form.Item label="Upload Logo" required={!editingId}>
+            <ImageUploadBox fileList={fileList} setFileList={setFileList} maxCount={1} />
           </Form.Item>
         </Form>
       </Modal>
