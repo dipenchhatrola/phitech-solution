@@ -59,18 +59,18 @@ export default function Clients() {
         >
           {clientsList.map((client) => {
             const content = (
-               <motion.div 
-                 variants={logoVariants}
-                 key={client._id}
-                 className="bg-white border border-[#eaeaea] rounded-md h-[85px] sm:h-[100px] flex items-center justify-center p-3 hover:shadow-lg transition-shadow cursor-pointer group overflow-hidden"
-               >
-                 <img 
-                   src={client.image} 
-                   alt={client.name} 
-                   className="max-w-[85%] max-h-[85%] object-contain grayscale opacity-60 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-300 ease-in-out transform group-hover:scale-105"
-                   loading="lazy"
-                 />
-               </motion.div>
+              <motion.div 
+                variants={logoVariants}
+                key={client._id}
+                className="bg-white border border-[#eaeaea] rounded-md h-[85px] sm:h-[100px] flex items-center justify-center p-3 hover:shadow-[0_12px_24px_rgba(228,30,38,0.12)] transition-all duration-300 cursor-pointer group overflow-hidden hover:border-[#e41e26]/10"
+              >
+                <img 
+                  src={client.image} 
+                  alt={client.name} 
+                  className="max-w-[85%] max-h-[85%] object-contain grayscale opacity-60 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-300 ease-in-out transform group-hover:scale-105"
+                  loading="lazy"
+                />
+              </motion.div>
             );
 
             if (client.link) {
