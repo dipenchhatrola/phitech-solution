@@ -13,10 +13,16 @@ api.interceptors.request.use((config) => {
   const adminToken = localStorage.getItem('adminToken');
   const clientToken = localStorage.getItem('clientToken');
 
-  if (adminToken && window.location.pathname.startsWith('/admin')) {
-    config.headers.Authorization = `Bearer ${adminToken}`;
-  } else if (clientToken && !window.location.pathname.startsWith('/dashboard')) {
-    config.headers.Authorization = `Bearer ${clientToken}`;
+  // If we are on an admin route, prioritize the admin token
+  if (window.location.pathname.startsWith('/admin')) {
+    if (adminToken) {
+      config.headers.Authorization = `Bearer ${adminToken}`;
+    }
+  } else {
+    // For all other routes (including dashboard), use the client token if available
+    if (clientToken) {
+      config.headers.Authorization = `Bearer ${clientToken}`;
+    }
   }
   return config;
 });

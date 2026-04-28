@@ -127,9 +127,9 @@ export default function Navbar() {
           <div className="hidden lg:flex flex-col flex-grow justify-center ml-6 xl:ml-10">
 
             {/* Top Row: Contact Info & Socials - Hidden on scroll */}
-            <motion.div 
-              animate={{ 
-                height: scrolled ? 0 : "auto", 
+            <motion.div
+              animate={{
+                height: scrolled ? 0 : "auto",
                 opacity: scrolled ? 0 : 1,
                 marginBottom: scrolled ? 0 : 8,
                 paddingBottom: scrolled ? 0 : 8
@@ -185,7 +185,15 @@ export default function Navbar() {
 
               {/* Profile Icon */}
               <button
-                onClick={() => navigate(isLoggedIn ? (localStorage.getItem("adminToken") ? "/admin" : "/dashboard") : "/login")}
+                onClick={() => {
+                  if (localStorage.getItem("adminToken")) {
+                    navigate("/admin");
+                  } else if (localStorage.getItem("clientToken")) {
+                    navigate("/dashboard");
+                  } else {
+                    navigate("/login");
+                  }
+                }}
                 className={`ml-3 p-1.5 rounded-full border transition-all duration-300 border-slate-200 text-slate-600 hover:bg-slate-50`}
                 title={isLoggedIn ? "Dashboard" : "Login"}
               >
