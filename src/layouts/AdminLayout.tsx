@@ -13,7 +13,8 @@ import {
   MenuUnfoldOutlined,
   MenuFoldOutlined,
   MenuOutlined,
-  CloseOutlined
+  CloseOutlined,
+  MailOutlined
 } from "@ant-design/icons";
 
 const navBase =
@@ -43,6 +44,7 @@ export default function AdminLayout() {
     { to: "/admin/categories", label: "Category", icon: <TagsOutlined /> },
     { to: "/admin/products", label: "Product", icon: <ShoppingOutlined /> },
     { to: "/admin/clients", label: "Testimonials", icon: <CommentOutlined /> },
+    { to: "/admin/inquiries", label: "Inquiries", icon: <MailOutlined /> },
     { to: "/admin/settings", label: "Settings", icon: <SettingOutlined /> },
   ];
 
