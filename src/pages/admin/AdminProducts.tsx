@@ -133,6 +133,13 @@ export default function AdminProducts() {
       render: (cat: any) => cat?.name || '-',
     },
     {
+      title: 'Description',
+      dataIndex: 'description',
+      key: 'description',
+      ellipsis: true,
+      width: 300,
+    },
+    {
       title: 'Image',
       dataIndex: 'photos',
       key: 'photos',
