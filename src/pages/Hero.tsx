@@ -7,7 +7,7 @@ export default function Hero() {
     useEffect(() => {
         const timer = setInterval(() => {
             setCurrentSlide((prev) => (prev + 1) % 3);
-        }, 5000);
+        }, 3000);
         return () => clearInterval(timer);
     }, []);
 
@@ -23,37 +23,42 @@ export default function Hero() {
     // Removed HexBorder to pass CI build unused-vars
 
     return (
-        <section className="relative h-[650px] lg:h-[750px] overflow-hidden bg-slate-100 flex items-center justify-center">
+        <section className="relative h-[650px] lg:h-[550px] overflow-hidden bg-slate-100 flex items-center justify-center">
 
             {/* SLIDE 0: Delivering Innovation (Horizontal Line of Circles) */}
-            <div className={`absolute inset-0 bg-[#f5f6f8] transition-opacity duration-3000 flex flex-col items-center justify-between pt-28 pb-20 ${currentSlide === 0 ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'}`}>
+            <div className={`absolute inset-0 transition-opacity duration-3000 flex flex-col items-center justify-center pt-28 pb-4 px-4 ${currentSlide === 0 ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'}`}>
+                <div
+                    className="absolute inset-0 bg-cover bg-center bg-no-repeat "
+                    style={{ backgroundImage: "url('/Banner-1.jpg')" }}
+                >
+                    {/* <div className="absolute inset-0 bg-white/80"></div> */}
+                </div>
 
                 {/* Heading Text restored to match Image 1 */}
                 <motion.div
                     initial={{ y: 30, opacity: 0 }}
                     animate={{ y: currentSlide === 0 ? 0 : 30, opacity: currentSlide === 0 ? 1 : 0 }}
                     transition={{ duration: 0.8, delay: 0.3 }}
-                    className="text-center w-full z-10"
+                    className="text-center w-full z-10 mb-2 lg:mb-4"
                 >
-                    <h1 className="text-3xl md:text-5xl font-display font-black text-[#e41e26] mb-2">Delivering Innovation</h1>
-                    <p className="text-xl md:text-3xl text-slate-700 font-bold">We provide solution for</p>
+                    <h1 className="text-2xl md:text-4xl lg:text-5xl font-display font-bold text-[#da251d] tracking-tight">Delivering Innovation</h1>
+                    <p className="text-base md:text-xl lg:text-2xl text-slate-600 font-bold tracking-wide">We provide solution for</p>
                 </motion.div>
 
-                <div className="w-full max-w-5xl mx-auto flex justify-center items-center px-4 z-10 flex-1 min-h-0 py-4">
+                <div className="relative w-full max-w-[85%] md:max-w-xl lg:max-w-2xl mx-auto z-10 flex-shrink-0">
                     <img
                         src="/slider-image.png"
                         alt="Innovation Services Hexagon Arch"
-                        className="w-full h-full object-contain drop-shadow-xl"
+                        className="w-full h-auto object-contain drop-shadow-2xl"
                         onError={(e) => {
                             const target = e.target as HTMLImageElement;
                             target.src = "https://phitech.co.in/wp-content/uploads/2023/07/Banner-1-product-1.png";
                         }}
                     />
-                </div>
-
-                <div className="text-center w-full z-10">
-                    <p className="text-xl md:text-3xl text-slate-700 font-bold">Mould</p>
-                    <p className="text-xl md:text-3xl text-slate-700 font-bold">Manufacturing</p>
+                    <div className="absolute bottom-[8%] md:bottom-[10%] left-1/2 -translate-x-1/2 text-center w-full z-10">
+                        <p className="text-base md:text-xl lg:text-2xl text-slate-700 font-bold leading-tight md:leading-tight">Mould</p>
+                        <p className="text-base md:text-xl lg:text-2xl text-slate-700 font-bold leading-tight md:leading-tight">Manufacturing</p>
+                    </div>
                 </div>
             </div>
 
@@ -69,35 +74,42 @@ export default function Hero() {
                     initial={{ y: 30, opacity: 0 }}
                     animate={{ y: currentSlide === 1 ? 0 : 30, opacity: currentSlide === 1 ? 1 : 0 }}
                     transition={{ duration: 0.8, delay: 0.3 }}
-                    className="relative z-10 h-full flex flex-col items-center justify-center text-center px-4"
+                    className="relative z-10 h-full flex flex-col items-center justify-center text-center px-4 pt-20"
                 >
-                    <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-2 tracking-wide font-display drop-shadow-lg">The leading manufacturer of</h2>
-                    <h1 className="text-6xl md:text-[5.5rem] lg:text-[7rem] font-display font-black text-white mb-6 tracking-tight leading-none drop-shadow-2xl">Plastic Moulds</h1>
-                    <p className="text-lg md:text-xl lg:text-2xl text-slate-100 font-medium tracking-wide drop-shadow-lg">We provide a professional service for individual and corporate customers.</p>
+                    <h2 className="text-xl md:text-3xl lg:text-4xl font-bold text-white mb-2 tracking-wide font-display drop-shadow-lg">The leading manufacturer of</h2>
+                    <h1 className="text-4xl md:text-6xl lg:text-[6rem] font-display font-black text-white mb-2 md:mb-4 tracking-tight leading-none drop-shadow-2xl">Plastic Moulds</h1>
+                    <p className="text-base md:text-xl lg:text-2xl text-slate-100 font-medium tracking-wide drop-shadow-lg">We provide a professional service for individual and corporate customers.</p>
                 </motion.div>
             </div>
 
             {/* SLIDE 2: Services Hexagons Design Arch */}
-            <div className={`absolute inset-0 bg-[#f5f6f8] transition-opacity duration-3000 flex flex-col items-center justify-between pt-28 pb-20 ${currentSlide === 2 ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'}`}>
-                <div className="w-full max-w-5xl mx-auto flex justify-center items-center px-4 z-10 flex-1 min-h-0 py-4">
+            <div className={`absolute inset-0 transition-opacity duration-3000 flex flex-col items-center justify-center pt-28 pb-4 px-4 ${currentSlide === 2 ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'}`}>
+                <div
+                    className="absolute inset-0 bg-cover bg-center bg-no-repeat "
+                    style={{ backgroundImage: "url('/Banner-3-min.jpg')" }}
+                >
+                    {/* <div className="absolute inset-0 bg-white/80"></div> */}
+                </div>
+                <div className="w-full max-w-[85%] md:max-w-xl lg:max-w-2xl mx-auto flex justify-center items-center z-10 flex-shrink-0 mb-2 lg:mb-4">
                     <img
                         src="/services-hexagons.png"
                         alt="Innovation Services Hexagon Arch"
-                        className="w-full h-full object-contain drop-shadow-xl"
+                        className="w-full h-auto object-contain drop-shadow-xl"
                         onError={(e) => {
                             const target = e.target as HTMLImageElement;
                             target.src = "https://phitech.co.in/wp-content/uploads/2023/07/Banner-3-prod.png";
                         }}
                     />
                 </div>
+
                 <motion.div
                     initial={{ y: 30, opacity: 0 }}
                     animate={{ y: currentSlide === 2 ? 0 : 30, opacity: currentSlide === 2 ? 1 : 0 }}
                     transition={{ duration: 0.8, delay: 0.3 }}
                     className="text-center w-full z-10"
                 >
-                    <h1 className="text-4xl md:text-6xl font-display font-black text-[#e41e26] mb-2">Services</h1>
-                    <p className="text-xl md:text-3xl text-slate-700 font-bold">We provide</p>
+                    <h1 className="text-2xl md:text-4xl lg:text-5xl font-display font-black text-[#e41e26] mb-0 md:mb-1">Services</h1>
+                    <p className="text-base md:text-xl lg:text-2xl text-slate-700 font-bold">We provide</p>
                 </motion.div>
             </div>
 
@@ -109,12 +121,7 @@ export default function Hero() {
                 <svg className="w-4 h-4 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
             </button>
 
-            {/* Dots Navigation */}
-            <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex space-x-3 z-30">
-                {[0, 1, 2].map((i) => (
-                    <button key={i} onClick={() => setCurrentSlide(i)} className={`w-3 h-3 rounded-full transition-colors ${currentSlide === i ? 'bg-brand-600 scale-125' : 'bg-black/20 hover:bg-black/40'}`}></button>
-                ))}
-            </div>
+
         </section>
     );
 }
