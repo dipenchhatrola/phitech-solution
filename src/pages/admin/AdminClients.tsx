@@ -39,8 +39,8 @@ export default function AdminClients() {
   const handleEdit = (record: any) => {
     setEditingId(record._id);
     form.setFieldsValue({
-        name: record.name,
-        link: record.link
+      name: record.name,
+      link: record.link
     });
     if (record.image) {
       setFileList([{ uid: '-1', name: 'logo.png', status: 'done', url: record.image }]);
@@ -63,11 +63,11 @@ export default function AdminClients() {
   const handleOk = async () => {
     try {
       const values = await form.validateFields();
-      
+
       const formData = new FormData();
       formData.append("name", values.name);
       if (values.link) formData.append("link", values.link);
-      
+
       if (fileList.length > 0 && fileList[0].originFileObj) {
         formData.append("image", fileList[0].originFileObj);
       } else if (!editingId) {
@@ -96,7 +96,7 @@ export default function AdminClients() {
 
   const columns = [
     {
-      title: 'Name',
+      title: 'Client Name',
       dataIndex: 'name',
       key: 'name',
       sorter: (a: any, b: any) => a.name.localeCompare(b.name),
@@ -141,21 +141,21 @@ export default function AdminClients() {
     <div className="space-y-6">
       <div className="flex justify-between items-center bg-white border border-slate-200 p-6 rounded-xl">
         <div>
-            <h2 className="text-lg font-semibold">Testimonials Management</h2>
-            <p className="text-sm text-slate-500">Manage testimonial logos and links</p>
+          <h2 className="text-lg font-semibold">Client Management</h2>
+          <p className="text-sm text-slate-500">Manage Clients</p>
         </div>
         <Button type="primary" icon={<PlusOutlined />} onClick={handleAdd}>
-          Add Testimonial
+          Add Client
         </Button>
       </div>
 
       <div className="bg-white rounded-xl border border-slate-200 overflow-hidden p-6">
-        <Table 
-            columns={columns} 
-            dataSource={clients} 
-            rowKey="_id" 
-            loading={loading}
-            pagination={{ pageSize: 10 }}
+        <Table
+          columns={columns}
+          dataSource={clients}
+          rowKey="_id"
+          loading={loading}
+          pagination={{ pageSize: 10 }}
         />
       </div>
 
