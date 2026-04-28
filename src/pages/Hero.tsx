@@ -23,10 +23,10 @@ export default function Hero() {
     // Removed HexBorder to pass CI build unused-vars
 
     return (
-        <section className="relative h-[650px] lg:h-[550px] overflow-hidden bg-slate-100 flex items-center justify-center">
+        <section className="relative h-[650px]  overflow-hidden bg-slate-100 flex items-center justify-center">
 
             {/* SLIDE 0: Delivering Innovation (Horizontal Line of Circles) */}
-            <div className={`absolute inset-0 transition-opacity duration-3000 flex flex-col items-center justify-center pt-28 pb-4 px-4 ${currentSlide === 0 ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'}`}>
+            <div className={`absolute inset-0 transition-opacity duration-5000 flex flex-col items-center justify-center pt-28 pb-4 px-4 ${currentSlide === 0 ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'}`}>
                 <div
                     className="absolute inset-0 bg-cover bg-center bg-no-repeat "
                     style={{ backgroundImage: "url('/Banner-1.jpg')" }}
@@ -49,7 +49,7 @@ export default function Hero() {
                     <img
                         src="/slider-image.png"
                         alt="Innovation Services Hexagon Arch"
-                        className="w-full h-auto object-contain drop-shadow-2xl"
+                        className="w-full object-contain drop-shadow-2xl"
                         onError={(e) => {
                             const target = e.target as HTMLImageElement;
                             target.src = "https://phitech.co.in/wp-content/uploads/2023/07/Banner-1-product-1.png";
@@ -62,8 +62,8 @@ export default function Hero() {
                 </div>
             </div>
 
-            {/* SLIDE 1: Factory Title Background */}
-            <div className={`absolute inset-0 transition-opacity duration-3000 ${currentSlide === 1 ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'}`}>
+            {/* SLIDE 1: Factory Title Background - Increased height to match layout of image 1 */}
+            <div className={`absolute inset-0 transition-opacity duration-5000 ${currentSlide === 1 ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'}`}>
                 <div
                     className="absolute inset-0 bg-cover bg-center bg-no-repeat"
                     style={{ backgroundImage: "url('https://phitech.co.in/wp-content/uploads/2023/07/Banner-2-min.jpg')" }}
@@ -74,16 +74,17 @@ export default function Hero() {
                     initial={{ y: 30, opacity: 0 }}
                     animate={{ y: currentSlide === 1 ? 0 : 30, opacity: currentSlide === 1 ? 1 : 0 }}
                     transition={{ duration: 0.8, delay: 0.3 }}
-                    className="relative z-10 h-full flex flex-col items-center justify-center text-center px-4 pt-20"
+                    // Increased pt-20 to pt-32 and added extra pb-8 for better vertical balance
+                    className="relative z-10 h-full flex flex-col items-center justify-center text-center px-4 pt-32 pb-8"
                 >
                     <h2 className="text-xl md:text-3xl lg:text-4xl font-bold text-white mb-2 tracking-wide font-display drop-shadow-lg">The leading manufacturer of</h2>
                     <h1 className="text-4xl md:text-6xl lg:text-[6rem] font-display font-black text-white mb-2 md:mb-4 tracking-tight leading-none drop-shadow-2xl">Plastic Moulds</h1>
-                    <p className="text-base md:text-xl lg:text-2xl text-slate-100 font-medium tracking-wide drop-shadow-lg">We provide a professional service for individual and corporate customers.</p>
+                    <p className="text-base md:text-xl lg:text-2xl text-slate-100 font-medium tracking-wide drop-shadow-lg max-w-3xl mx-auto">We provide a professional service for individual and corporate customers.</p>
                 </motion.div>
             </div>
 
             {/* SLIDE 2: Services Hexagons Design Arch */}
-            <div className={`absolute inset-0 transition-opacity duration-3000 flex flex-col items-center justify-center pt-28 pb-4 px-4 ${currentSlide === 2 ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'}`}>
+            <div className={`absolute inset-0 transition-opacity duration-5000 flex flex-col items-center justify-center pt-28 pb-4 px-4 ${currentSlide === 2 ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'}`}>
                 <div
                     className="absolute inset-0 bg-cover bg-center bg-no-repeat "
                     style={{ backgroundImage: "url('/Banner-3-min.jpg')" }}

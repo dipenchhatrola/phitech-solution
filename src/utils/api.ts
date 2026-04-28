@@ -15,7 +15,7 @@ api.interceptors.request.use((config) => {
 
   if (adminToken && window.location.pathname.startsWith('/admin')) {
     config.headers.Authorization = `Bearer ${adminToken}`;
-  } else if (clientToken && !window.location.pathname.startsWith('/admin')) {
+  } else if (clientToken && !window.location.pathname.startsWith('/dashboard')) {
     config.headers.Authorization = `Bearer ${clientToken}`;
   }
   return config;

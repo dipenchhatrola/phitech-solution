@@ -2,12 +2,12 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import api from "../utils/api";
-import { FaPhoneAlt, FaFacebookF, FaInstagram, FaLinkedinIn } from "react-icons/fa";
+import { FaPhoneAlt, FaFacebookF, FaInstagram, FaTwitter } from "react-icons/fa";
 
 const PhoneIcon = FaPhoneAlt as any;
 const FacebookIcon = FaFacebookF as any;
 const InstagramIcon = FaInstagram as any;
-const LinkedinIcon = FaLinkedinIn as any;
+const TwitterIcon = FaTwitter as any;
 
 export default function Navbar() {
   const location = useLocation();
@@ -153,8 +153,8 @@ export default function Navbar() {
                 <a href={settings?.instagram || '#'} target="_blank" rel="noreferrer" className="w-5 h-5 rounded-full bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-600 text-white flex items-center justify-center hover:opacity-80 transition-opacity">
                   <InstagramIcon size={10} />
                 </a>
-                <a href={settings?.linkedin || '#'} target="_blank" rel="noreferrer" className="w-5 h-5 rounded-full bg-blue-700 text-white flex items-center justify-center hover:bg-blue-800 transition-colors">
-                  <LinkedinIcon size={10} />
+                <a href={settings?.twitter || '#'} target="_blank" rel="noreferrer" className="w-5 h-5 rounded-full bg-black text-white flex items-center justify-center hover:bg-gray-800 transition-colors">
+                  <TwitterIcon size={10} />
                 </a>
               </div>
 
