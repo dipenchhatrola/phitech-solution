@@ -1,10 +1,8 @@
-import React, { useState, useEffect } from "react";
-import { Table, Button, Modal, Form, Input, Space, Popconfirm, message, Upload, Image } from "antd";
-import { PlusOutlined, DeleteOutlined, InboxOutlined, EditOutlined } from "@ant-design/icons";
+import React, { useState, useEffect, useCallback } from "react";
+import { Table, Button, Modal, Form, Input, Space, Popconfirm, message, Image } from "antd";
+import { PlusOutlined, DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import api from "../../utils/api";
 import ImageUploadBox from "../../components/admin/ImageUploadBox";
-
-const { Dragger } = Upload;
 
 export default function AdminClients() {
   const [clients, setClients] = useState<any[]>([]);
@@ -14,12 +12,9 @@ export default function AdminClients() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [fileList, setFileList] = useState<any[]>([]);
 
-  useEffect(() => {
-    fetchClients();
-  }, []);
-
-  const fetchClients = async () => {
+  const fetchClients = useCallback(async () => {
     try {
+      setLoading(true);
       const response = await api.get("/clients");
       setClients(response.data);
     } catch (error) {
@@ -27,7 +22,11 @@ export default function AdminClients() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    fetchClients();
+  }, [fetchClients]);
 
   const handleAdd = () => {
     setEditingId(null);
@@ -139,23 +138,25 @@ export default function AdminClients() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center bg-white border border-slate-200 p-6 rounded-xl">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white border border-slate-200 p-6 rounded-xl">
         <div>
-          <h2 className="text-lg font-semibold">Client Management</h2>
+          <h2 className="text-lg font-semibold text-slate-800">Client Management</h2>
           <p className="text-sm text-slate-500">Manage Clients</p>
         </div>
-        <Button type="primary" icon={<PlusOutlined />} onClick={handleAdd}>
+        <Button type="primary" icon={<PlusOutlined />} onClick={handleAdd} className="w-full sm:w-auto">
           Add Client
         </Button>
       </div>
 
-      <div className="bg-white rounded-xl border border-slate-200 overflow-hidden p-6">
+      <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
         <Table
           columns={columns}
           dataSource={clients}
           rowKey="_id"
           loading={loading}
           pagination={{ pageSize: 10 }}
+          scroll={{ x: 800 }}
+          className="admin-table"
         />
       </div>
 

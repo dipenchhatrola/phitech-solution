@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
-import { Table, Button, Modal, Form, Input, Space, Popconfirm, message, Upload, Image } from "antd";
-import { PlusOutlined, DeleteOutlined, EditOutlined, UploadOutlined } from "@ant-design/icons";
+import { useState, useEffect, useCallback } from "react";
+import { Table, Button, Modal, Form, Input, Space, Popconfirm, message, Image } from "antd";
+import { PlusOutlined, DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import api from "../../utils/api";
 import ImageUploadBox from "../../components/admin/ImageUploadBox";
 
@@ -12,12 +12,9 @@ export default function AdminCategories() {
   const [form] = Form.useForm();
   const [fileList, setFileList] = useState<any[]>([]);
 
-  useEffect(() => {
-    fetchCategories();
-  }, []);
-
-  const fetchCategories = async () => {
+  const fetchCategories = useCallback(async () => {
     try {
+      setLoading(true);
       const response = await api.get("/categories");
       setCategories(response.data);
     } catch (error) {
@@ -26,7 +23,11 @@ export default function AdminCategories() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    fetchCategories();
+  }, [fetchCategories]);
 
   const handleDelete = async (id: string) => {
     try {
@@ -59,11 +60,11 @@ export default function AdminCategories() {
   const handleOk = async () => {
     try {
       const values = await form.validateFields();
-      
+
       const formData = new FormData();
       formData.append("name", values.name);
       if (values.description) formData.append("description", values.description);
-      
+
       if (fileList.length > 0 && fileList[0].originFileObj) {
         formData.append("image", fileList[0].originFileObj);
       } else if (!editingId) {
@@ -137,30 +138,32 @@ export default function AdminCategories() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center bg-white border border-slate-200 p-6 rounded-xl">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white border border-slate-200 p-6 rounded-xl">
         <div>
           <h2 className="text-lg font-semibold">Categories</h2>
           <p className="text-sm text-slate-500 mt-1">
             Manage product categories
           </p>
         </div>
-        <Button type="primary" icon={<PlusOutlined />} onClick={handleAdd}>Add Category</Button>
+        <Button type="primary" icon={<PlusOutlined />} onClick={handleAdd} className="w-full sm:w-auto">Add Category</Button>
       </div>
 
-      <div className="bg-white rounded-xl border border-slate-200 overflow-hidden p-6">
-        <Table 
-          columns={columns} 
-          dataSource={categories} 
-          rowKey="_id" 
+      <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+        <Table
+          columns={columns}
+          dataSource={categories}
+          rowKey="_id"
           loading={loading}
           pagination={{ pageSize: 10 }}
+          scroll={{ x: 800 }}
+          className="admin-table"
         />
       </div>
 
-      <Modal 
-        title={editingId ? "Edit Category" : "Add Category"} 
-        open={isModalVisible} 
-        onOk={handleOk} 
+      <Modal
+        title={editingId ? "Edit Category" : "Add Category"}
+        open={isModalVisible}
+        onOk={handleOk}
         onCancel={() => setIsModalVisible(false)}
         destroyOnClose
       >

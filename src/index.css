@@ -77,8 +77,48 @@ body {
 .goog-te-gadget img {
     display: none !important;
 }
-.goog-te-gadget .goog-te-combo {
-    color: #334155 !important;
-    font-size: 14px !important;
-    margin: 0 !important;
+/* Custom Scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Global scrollbar hide option if needed */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Ant Design Table Scrollbar Polish */
+.admin-table .ant-table-body::-webkit-scrollbar,
+.admin-table .ant-table-content::-webkit-scrollbar {
+  height: 6px;
+  width: 6px;
+}
+
+.admin-table .ant-table-body::-webkit-scrollbar-thumb,
+.admin-table .ant-table-content::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 10px;
+}
+
+.admin-table .ant-table-body::-webkit-scrollbar-thumb:hover,
+.admin-table .ant-table-content::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
 }

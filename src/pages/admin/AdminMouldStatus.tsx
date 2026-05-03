@@ -1,6 +1,6 @@
-import { useState, useEffect, useMemo } from "react";
-import { Table, Tag, Button, Modal, Form, DatePicker, Select, Input, InputNumber, Space, message, Popconfirm, Upload, Image } from "antd";
-import { PlusOutlined, EditOutlined, DeleteOutlined, UploadOutlined } from "@ant-design/icons";
+import { useState, useEffect, useMemo, useCallback } from "react";
+import { Table, Tag, Button, Modal, Form, DatePicker, Select, Input, InputNumber, Space, message, Popconfirm, Image } from "antd";
+import { PlusOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import api from "../../utils/api";
 import { useMoulds } from "../../context/MouldContext";
@@ -9,7 +9,7 @@ import ImageUploadBox from "../../components/admin/ImageUploadBox";
 const { Option } = Select;
 
 export default function AdminMouldStatus() {
-  const { moulds, setMoulds, updateMouldOptimistic, fetchMoulds, loading: mouldsLoading } = useMoulds();
+  const { moulds, updateMouldOptimistic, fetchMoulds } = useMoulds();
   const [clients, setClients] = useState<any[]>([]);
   const [products, setProducts] = useState<any[]>([]);
   const [customProductNames, setCustomProductNames] = useState<string[]>([]);
@@ -84,11 +84,7 @@ export default function AdminMouldStatus() {
     return { totalMoulds, statusCounts };
   }, [moulds]);
 
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       setLoading(true);
       const [usersRes, productsRes] = await Promise.all([
@@ -104,7 +100,11 @@ export default function AdminMouldStatus() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [fetchMoulds]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   const handleAdd = () => {
     setEditingId(null);
@@ -315,37 +315,37 @@ export default function AdminMouldStatus() {
 
   return (
     <div className="space-y-6">
-      <section className="grid gap-4 md:grid-cols-4">
-        <div className="rounded-xl bg-white p-4 border border-slate-200">
-          <p className="text-xs uppercase text-slate-400">Total Moulds</p>
-          <p className="text-2xl font-semibold text-slate-900 mt-2">{analytics.totalMoulds}</p>
+      <section className="grid gap-4 grid-cols-2 md:grid-cols-4">
+        <div className="rounded-xl bg-white p-4 border border-slate-200 shadow-sm">
+          <p className="text-[10px] uppercase tracking-wider text-slate-400 font-bold">Total Moulds</p>
+          <p className="text-xl sm:text-2xl font-semibold text-slate-900 mt-1">{analytics.totalMoulds}</p>
         </div>
-        <div className="rounded-xl bg-white p-4 border border-slate-200">
-          <p className="text-xs uppercase text-slate-400">Pending</p>
-          <p className="text-2xl font-semibold text-amber-600 mt-2">{analytics.statusCounts?.Pending || 0}</p>
+        <div className="rounded-xl bg-white p-4 border border-slate-200 shadow-sm">
+          <p className="text-[10px] uppercase tracking-wider text-slate-400 font-bold">Pending</p>
+          <p className="text-xl sm:text-2xl font-semibold text-amber-600 mt-1">{analytics.statusCounts?.Pending || 0}</p>
         </div>
-        <div className="rounded-xl bg-white p-4 border border-slate-200">
-          <p className="text-xs uppercase text-slate-400">In Machine</p>
-          <p className="text-2xl font-semibold text-blue-600 mt-2">{analytics.statusCounts?.InMachine || 0}</p>
+        <div className="rounded-xl bg-white p-4 border border-slate-200 shadow-sm">
+          <p className="text-[10px] uppercase tracking-wider text-slate-400 font-bold">In Machine</p>
+          <p className="text-xl sm:text-2xl font-semibold text-blue-600 mt-1">{analytics.statusCounts?.InMachine || 0}</p>
         </div>
-        <div className="rounded-xl bg-white p-4 border border-slate-200">
-          <p className="text-xs uppercase text-slate-400">Completed</p>
-          <p className="text-2xl font-semibold text-emerald-600 mt-2">{analytics.statusCounts?.Completed || 0}</p>
+        <div className="rounded-xl bg-white p-4 border border-slate-200 shadow-sm">
+          <p className="text-[10px] uppercase tracking-wider text-slate-400 font-bold">Completed</p>
+          <p className="text-xl sm:text-2xl font-semibold text-emerald-600 mt-1">{analytics.statusCounts?.Completed || 0}</p>
         </div>
       </section>
 
-      <section className="rounded-xl bg-white border border-slate-200 p-6">
-        <div className="flex justify-between items-center mb-4">
+      <section className="rounded-xl bg-white border border-slate-200 overflow-hidden">
+        <div className="p-6 border-b border-slate-100 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
           <div>
-            <h2 className="text-lg font-semibold">Mould Status</h2>
+            <h2 className="text-lg font-semibold text-slate-800">Mould Status</h2>
             <p className="text-sm text-slate-500">Overview of mould progress by client</p>
           </div>
-          <div className="flex gap-4 items-center">
+          <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center w-full lg:w-auto">
             <Select
               showSearch
               allowClear
               placeholder="Filter by Client"
-              style={{ width: 200 }}
+              className="w-full sm:w-[220px]"
               value={selectedClientFilter}
               onChange={setSelectedClientFilter}
               filterOption={(input, option) =>
@@ -358,7 +358,9 @@ export default function AdminMouldStatus() {
                 </Option>
               ))}
             </Select>
-            <Button type="primary" icon={<PlusOutlined />} onClick={handleAdd}>Add Job</Button>
+            <Button type="primary" icon={<PlusOutlined />} onClick={handleAdd} className="flex-shrink-0">
+              Add Job
+            </Button>
           </div>
         </div>
 
@@ -368,6 +370,8 @@ export default function AdminMouldStatus() {
           rowKey="_id"
           loading={loading}
           pagination={{ pageSize: 10 }}
+          scroll={{ x: 1200 }}
+          className="admin-table"
         />
       </section>
 

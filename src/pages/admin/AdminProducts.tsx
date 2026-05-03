@@ -1,10 +1,9 @@
-import { useState, useEffect } from "react";
-import { Table, Button, Modal, Form, Input, Space, Popconfirm, message, Upload, Switch, Image, Select, Tag } from "antd";
-import { PlusOutlined, DeleteOutlined, InboxOutlined, EditOutlined } from "@ant-design/icons";
+import { useState, useEffect, useCallback } from "react";
+import { Table, Button, Modal, Form, Input, Space, Popconfirm, message, Image, Select, Tag, Switch } from "antd";
+import { PlusOutlined, DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import api from "../../utils/api";
 import ImageUploadBox from "../../components/admin/ImageUploadBox";
 
-const { Dragger } = Upload;
 const { Option } = Select;
 
 export default function AdminProducts() {
@@ -15,14 +14,10 @@ export default function AdminProducts() {
   const [form] = Form.useForm();
   const [editingId, setEditingId] = useState<string | null>(null);
   const [fileList, setFileList] = useState<any[]>([]);
-  
-  useEffect(() => {
-    fetchProducts();
-    fetchCategories();
-  }, []);
 
-  const fetchProducts = async () => {
+  const fetchProducts = useCallback(async () => {
     try {
+      setLoading(true);
       const response = await api.get("/products");
       setProducts(response.data);
     } catch (error) {
@@ -31,16 +26,21 @@ export default function AdminProducts() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const fetchCategories = async () => {
+  const fetchCategories = useCallback(async () => {
     try {
       const response = await api.get("/categories");
       setCategories(response.data);
     } catch (error) {
       console.error(error);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    fetchProducts();
+    fetchCategories();
+  }, [fetchProducts, fetchCategories]);
 
   const handleAdd = () => {
     setEditingId(null);
@@ -52,8 +52,8 @@ export default function AdminProducts() {
   const handleEdit = (record: any) => {
     setEditingId(record._id);
     form.setFieldsValue({
-        ...record,
-        category: record.category?._id
+      ...record,
+      category: record.category?._id
     });
     if (record.photos && record.photos.length > 0) {
       setFileList(record.photos.map((url: string, idx: number) => ({
@@ -81,7 +81,7 @@ export default function AdminProducts() {
   const handleOk = async () => {
     try {
       const values = await form.validateFields();
-      
+
       const formData = new FormData();
       formData.append("name", values.name);
       formData.append("description", values.description);
@@ -89,7 +89,7 @@ export default function AdminProducts() {
       if (values.category) {
         formData.append("category", values.category);
       }
-      
+
       fileList.forEach(file => {
         if (file.originFileObj) {
           formData.append("photos", file.originFileObj);
@@ -103,8 +103,8 @@ export default function AdminProducts() {
         message.success("Product updated successfully");
       } else {
         if (fileList.length === 0) {
-            message.error("Please upload at least one photo");
-            return;
+          message.error("Please upload at least one photo");
+          return;
         }
         await api.post("/products", formData, {
           headers: { 'Content-Type': 'multipart/form-data' }
@@ -189,23 +189,25 @@ export default function AdminProducts() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center bg-white border border-slate-200 p-6 rounded-xl">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white border border-slate-200 p-6 rounded-xl">
         <div>
-            <h2 className="text-lg font-semibold">Products Management</h2>
-            <p className="text-sm text-slate-500">Manage public and internal products</p>
+          <h2 className="text-lg font-semibold">Products Management</h2>
+          <p className="text-sm text-slate-500">Manage public and internal products</p>
         </div>
-        <Button type="primary" icon={<PlusOutlined />} onClick={handleAdd}>
+        <Button type="primary" icon={<PlusOutlined />} onClick={handleAdd} className="w-full sm:w-auto">
           Add Product
         </Button>
       </div>
 
-      <div className="bg-white rounded-xl border border-slate-200 overflow-hidden p-6">
-        <Table 
-            columns={columns} 
-            dataSource={products} 
-            rowKey="_id" 
-            loading={loading}
-            pagination={{ pageSize: 10 }}
+      <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+        <Table
+          columns={columns}
+          dataSource={products}
+          rowKey="_id"
+          loading={loading}
+          pagination={{ pageSize: 10 }}
+          scroll={{ x: 1000 }}
+          className="admin-table"
         />
       </div>
 

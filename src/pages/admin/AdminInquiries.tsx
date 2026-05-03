@@ -99,18 +99,20 @@ export default function AdminInquiries() {
 
   return (
     <div className="space-y-6">
-      <div className="bg-white border border-slate-200 p-6 rounded-xl">
-        <h2 className="text-lg font-semibold">Contact Inquiries</h2>
+      <div className="bg-white border border-slate-200 p-6 rounded-xl shadow-sm">
+        <h2 className="text-lg font-semibold text-slate-800">Contact Inquiries</h2>
         <p className="text-sm text-slate-500">Manage inquiries received from the website contact form</p>
       </div>
 
-      <div className="bg-white rounded-xl border border-slate-200 overflow-hidden p-6">
+      <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
         <Table 
           columns={columns} 
           dataSource={inquiries} 
           rowKey="_id" 
           loading={loading}
           pagination={{ pageSize: 10 }}
+          scroll={{ x: 800 }}
+          className="admin-table"
         />
       </div>
 

@@ -70,8 +70,8 @@ export default function AdminLayout() {
         <div className="flex-1 overflow-y-auto custom-scrollbar flex flex-col">
           {/* Sidebar Header */}
           <div className={`px-6 py-7 border-b border-slate-800 flex items-center justify-between ${isCollapsed ? "lg:justify-center lg:px-0" : ""}`}>
-            <div className={`transition-all duration-300 ${isCollapsed ? "lg:hidden opacity-0 w-0" : "opacity-100 w-auto"}`}>
-              <div className="text-lg font-bold tracking-tight whitespace-nowrap">Phitech Admin</div>
+            <div className={`transition-all duration-300 overflow-hidden ${isCollapsed ? "lg:w-0 lg:opacity-0" : "w-auto opacity-100"}`}>
+              <div className="text-lg font-bold tracking-tight whitespace-nowrap text-white">Phitech Admin</div>
               <div className="text-[10px] uppercase tracking-widest text-slate-500 font-semibold mt-0.5 whitespace-nowrap">
                 Internal Console
               </div>
@@ -92,7 +92,7 @@ export default function AdminLayout() {
             </button>
           </div>
 
-          <nav className="px-3 py-6 space-y-2 flex-1">
+          <nav className="px-3 py-6 space-y-1 flex-1">
             {navLinks.map((link) => (
               <NavLink
                 key={link.to}
@@ -108,7 +108,7 @@ export default function AdminLayout() {
                 }
               >
                 <span className={`text-lg flex-shrink-0 ${isCollapsed ? "lg:text-xl" : ""}`}>{link.icon}</span>
-                <span className={`transition-all duration-300 ${isCollapsed ? "lg:hidden lg:opacity-0 lg:w-0" : "opacity-100 w-auto"}`}>
+                <span className={`transition-all duration-300 overflow-hidden ${isCollapsed ? "lg:w-0 lg:opacity-0" : "w-auto opacity-100"}`}>
                   {link.label}
                 </span>
               </NavLink>
@@ -118,7 +118,7 @@ export default function AdminLayout() {
 
         {/* User Profile / Logout Section */}
         <div className={`p-4 border-t border-slate-800 bg-slate-900/50 mt-auto`}>
-          <div className={`px-2 mb-4 transition-all duration-300 ${isCollapsed ? "lg:hidden lg:opacity-0 lg:h-0" : "opacity-100"}`}>
+          <div className={`px-2 mb-4 transition-all duration-300 overflow-hidden ${isCollapsed ? "lg:h-0 lg:opacity-0" : "opacity-100"}`}>
             <div className="text-xs text-slate-500 font-medium uppercase tracking-wider">Active User</div>
             <div className="text-sm font-semibold text-slate-200 truncate">{session?.username ?? "Administrator"}</div>
           </div>
@@ -132,7 +132,7 @@ export default function AdminLayout() {
             title={isCollapsed ? "Logout" : ""}
           >
             <LogoutOutlined className={isCollapsed ? "lg:text-xl" : ""} />
-            <span className={`transition-all duration-300 ${isCollapsed ? "lg:hidden lg:opacity-0 lg:w-0" : "opacity-100 w-auto ml-2"}`}>
+            <span className={`transition-all duration-300 overflow-hidden ${isCollapsed ? "lg:w-0 lg:opacity-0" : "w-auto opacity-100 ml-2"}`}>
               Logout
             </span>
           </button>
@@ -142,26 +142,26 @@ export default function AdminLayout() {
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col h-screen overflow-hidden min-w-0">
         {/* Header */}
-        <header className="bg-white border-b border-slate-200 px-4 sm:px-8 py-4 flex-shrink-0 z-10">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
+        <header className="bg-white border-b border-slate-200 px-4 sm:px-6 lg:px-8 py-4 flex-shrink-0 z-10">
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3 min-w-0">
               <button 
                 onClick={() => setIsMobileOpen(true)}
-                className="lg:hidden p-2 rounded-lg hover:bg-slate-100 text-slate-600 transition-colors"
+                className="lg:hidden p-2 -ml-2 rounded-lg hover:bg-slate-100 text-slate-600 transition-colors"
               >
                 <MenuOutlined className="text-xl" />
               </button>
-              <h1 className="text-xl font-bold text-slate-800 truncate">
+              <h1 className="text-lg sm:text-xl font-bold text-slate-800 truncate">
                 {navLinks.find(l => 
                   l.end ? location.pathname === l.to : location.pathname.startsWith(l.to)
                 )?.label || "Administration"}
               </h1>
             </div>
             
-            <div className="flex items-center gap-4">
-              <div className="hidden sm:block text-right">
-                <div className="text-[10px] uppercase font-bold text-slate-400 tracking-widest">Session Status</div>
-                <div className="text-xs text-emerald-500 font-medium flex items-center gap-1.5 justify-end">
+            <div className="flex items-center gap-4 flex-shrink-0">
+              <div className="hidden xs:block text-right">
+                <div className="text-[10px] uppercase font-bold text-slate-400 tracking-widest leading-tight">Session</div>
+                <div className="text-[11px] text-emerald-500 font-medium flex items-center gap-1.5 justify-end">
                   <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
                   Active
                 </div>
@@ -171,18 +171,18 @@ export default function AdminLayout() {
         </header>
 
         {/* Content Section */}
-        <main className="flex-1 overflow-y-auto p-4 sm:p-8 custom-scrollbar bg-slate-50">
+        <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 custom-scrollbar bg-slate-50">
           <div className="max-w-7xl mx-auto w-full">
             <Outlet />
           </div>
         </main>
 
         {/* Footer */}
-        <footer className="bg-white border-t border-slate-200 px-8 py-3 text-[11px] text-slate-400 flex flex-col sm:flex-row justify-between items-center gap-2 flex-shrink-0">
-          <div>© {new Date().getFullYear()} Phitech Solutions Dashboard</div>
+        <footer className="bg-white border-t border-slate-200 px-4 sm:px-8 py-3 text-[10px] sm:text-[11px] text-slate-400 flex flex-col sm:flex-row justify-between items-center gap-2 flex-shrink-0">
+          <div className="text-center sm:text-left">© {new Date().getFullYear()} Phitech Solutions Dashboard</div>
           <div className="flex gap-4">
-            <span className="hover:text-indigo-600 cursor-pointer">Support</span>
-            <span className="hover:text-indigo-600 cursor-pointer">Privacy</span>
+            <span className="hover:text-indigo-600 cursor-pointer transition-colors">Support</span>
+            <span className="hover:text-indigo-600 cursor-pointer transition-colors">Privacy</span>
           </div>
         </footer>
       </div>

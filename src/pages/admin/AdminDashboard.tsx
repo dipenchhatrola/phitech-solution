@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Row, Col, Statistic, Spin, message, Typography, Space } from 'antd';
+import { Card, Row, Col, Statistic, Spin, message, Typography } from 'antd';
 import {
   UserOutlined,
   ToolOutlined,
@@ -72,26 +72,28 @@ export default function AdminDashboard() {
   return (
     <div className="space-y-6">
       <div className="flex items-center space-x-2">
-        <DashboardOutlined className="text-2xl text-brand-600" />
-        <Title level={2} className="!mb-0">Dashboard Overview</Title>
+        <DashboardOutlined className="text-2xl text-indigo-600" />
+        <Title level={2} className="!mb-0 !text-2xl sm:!text-3xl">Dashboard Overview</Title>
       </div>
 
       {/* Mould Status Cards */}
       <Row gutter={[16, 16]}>
         {Object.entries(statusCounts).length > 0 ? (
           Object.entries(statusCounts).map(([status, count]: [string, any], index) => (
-            <Col key={status} xs={24} sm={12} lg={6}>
+            <Col key={status} xs={12} sm={12} lg={6}>
               <Card
                 bordered={false}
-                className={`shadow-sm border-l-4 ${status === 'Pending' ? 'border-amber-500' :
+                className={`shadow-sm border-l-4 h-full ${status === 'Pending' ? 'border-amber-500' :
                     status === 'In Machine' ? 'border-blue-500' :
                       status === 'Completed' ? 'border-emerald-500' :
                         'border-slate-500'
                   }`}
+                bodyStyle={{ padding: '16px' }}
               >
                 <Statistic
-                  title={<Text type="secondary" className="uppercase tracking-wider text-xs">{status}</Text>}
+                  title={<Text type="secondary" className="uppercase tracking-widest text-[10px] font-bold">{status}</Text>}
                   value={count}
+                  valueStyle={{ fontSize: '1.5rem', fontWeight: '700' }}
                   prefix={
                     <div className={`mr-2 p-2 rounded-lg inline-flex ${status === 'Pending' ? 'bg-amber-100 text-amber-600' :
                         status === 'In Machine' ? 'bg-blue-100 text-blue-600' :
@@ -110,7 +112,7 @@ export default function AdminDashboard() {
           ))
         ) : (
           <Col span={24}>
-            <Card bordered={false} className="text-center py-8">
+            <Card bordered={false} className="text-center py-12 bg-white/50">
               <Text type="secondary">No mould jobs found to display status.</Text>
             </Card>
           </Col>
@@ -118,59 +120,59 @@ export default function AdminDashboard() {
       </Row>
 
       <div className="pt-4 pb-2">
-        <Title level={4}>Overview Totals</Title>
+        <Title level={4} className="!text-lg">Overview Totals</Title>
       </div>
 
       {/* Metric Cards (Reduced size or secondary) */}
       <Row gutter={[16, 16]}>
-        <Col xs={24} sm={12} lg={6}>
-          <Card bordered={false} className="shadow-sm bg-white/60">
+        <Col xs={12} sm={12} lg={6}>
+          <Card bordered={false} className="shadow-sm bg-white/60 hover:bg-white transition-colors" bodyStyle={{ padding: '16px' }}>
             <div className="flex items-center space-x-3">
               <div className="p-2 bg-blue-50 text-blue-500 rounded-md">
                 <UserOutlined />
               </div>
-              <div>
-                <Text type="secondary" className="text-xs block">Clients</Text>
-                <Text strong className="text-lg">{totals.clients}</Text>
+              <div className="min-w-0">
+                <Text type="secondary" className="text-[10px] uppercase font-bold tracking-tight block truncate">Clients</Text>
+                <Text strong className="text-base sm:text-lg">{totals.clients}</Text>
               </div>
             </div>
           </Card>
         </Col>
-        <Col xs={24} sm={12} lg={6}>
-          <Card bordered={false} className="shadow-sm bg-white/60">
+        <Col xs={12} sm={12} lg={6}>
+          <Card bordered={false} className="shadow-sm bg-white/60 hover:bg-white transition-colors" bodyStyle={{ padding: '16px' }}>
             <div className="flex items-center space-x-3">
               <div className="p-2 bg-amber-50 text-amber-500 rounded-md">
                 <ToolOutlined />
               </div>
-              <div>
-                <Text type="secondary" className="text-xs block">Mould Jobs</Text>
-                <Text strong className="text-lg">{totals.moulds}</Text>
+              <div className="min-w-0">
+                <Text type="secondary" className="text-[10px] uppercase font-bold tracking-tight block truncate">Mould Jobs</Text>
+                <Text strong className="text-base sm:text-lg">{totals.moulds}</Text>
               </div>
             </div>
           </Card>
         </Col>
-        <Col xs={24} sm={12} lg={6}>
-          <Card bordered={false} className="shadow-sm bg-white/60">
+        <Col xs={12} sm={12} lg={6}>
+          <Card bordered={false} className="shadow-sm bg-white/60 hover:bg-white transition-colors" bodyStyle={{ padding: '16px' }}>
             <div className="flex items-center space-x-3">
               <div className="p-2 bg-emerald-50 text-emerald-500 rounded-md">
                 <ShoppingOutlined />
               </div>
-              <div>
-                <Text type="secondary" className="text-xs block">Products</Text>
-                <Text strong className="text-lg">{totals.products}</Text>
+              <div className="min-w-0">
+                <Text type="secondary" className="text-[10px] uppercase font-bold tracking-tight block truncate">Products</Text>
+                <Text strong className="text-base sm:text-lg">{totals.products}</Text>
               </div>
             </div>
           </Card>
         </Col>
-        <Col xs={24} sm={12} lg={6}>
-          <Card bordered={false} className="shadow-sm bg-white/60">
+        <Col xs={12} sm={12} lg={6}>
+          <Card bordered={false} className="shadow-sm bg-white/60 hover:bg-white transition-colors" bodyStyle={{ padding: '16px' }}>
             <div className="flex items-center space-x-3">
               <div className="p-2 bg-purple-50 text-purple-500 rounded-md">
                 <CommentOutlined />
               </div>
-              <div>
-                <Text type="secondary" className="text-xs block">Testimonials</Text>
-                <Text strong className="text-lg">{totals.testimonials}</Text>
+              <div className="min-w-0">
+                <Text type="secondary" className="text-[10px] uppercase font-bold tracking-tight block truncate">Testimonials</Text>
+                <Text strong className="text-base sm:text-lg">{totals.testimonials}</Text>
               </div>
             </div>
           </Card>

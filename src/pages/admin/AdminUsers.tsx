@@ -118,23 +118,25 @@ export default function AdminUsers() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center bg-white border border-slate-200 p-6 rounded-xl">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white border border-slate-200 p-6 rounded-xl">
         <div>
           <h2 className="text-lg font-semibold">Clients</h2>
           <p className="text-sm text-slate-500 mt-1">
             Manage clients mapped to mould data
           </p>
         </div>
-        <Button type="primary" icon={<PlusOutlined />} onClick={handleAdd}>Add Client</Button>
+        <Button type="primary" icon={<PlusOutlined />} onClick={handleAdd} className="w-full sm:w-auto">Add Client</Button>
       </div>
 
-      <div className="bg-white rounded-xl border border-slate-200 overflow-hidden p-6">
+      <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
         <Table 
           columns={columns} 
           dataSource={users} 
           rowKey="_id" 
           loading={loading}
           pagination={{ pageSize: 10 }}
+          scroll={{ x: 800 }}
+          className="admin-table"
         />
       </div>
 
