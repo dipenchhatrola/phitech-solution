@@ -183,6 +183,17 @@ export default function Navbar() {
                 )
               })}
 
+              {/* Webmail/Inquiries Icon */}
+              <button
+                onClick={() => navigate(localStorage.getItem("adminToken") ? "/admin/inquiries" : "/login")}
+                className={`ml-3 p-1.5 rounded-full border transition-all duration-300 border-slate-200 text-slate-600 hover:bg-slate-50`}
+                title="Inquiries"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+              </button>
+
               {/* Profile Icon */}
               <button
                 onClick={() => {
@@ -206,6 +217,16 @@ export default function Navbar() {
 
           {/* Mobile Menu Button */}
           <div className="flex items-center space-x-2 lg:hidden">
+            <button
+              onClick={() => navigate(localStorage.getItem("adminToken") ? "/admin/inquiries" : "/login")}
+              className={`p-2 rounded-full border transition-all duration-300 border-slate-200 text-slate-600 hover:bg-slate-50`}
+              title="Inquiries"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              </svg>
+            </button>
+
             <button
               onClick={() => navigate(isLoggedIn ? (localStorage.getItem("adminToken") ? "/admin" : "/dashboard") : "/login")}
               className={`p-2 rounded-full border transition-all duration-300 border-slate-200 text-slate-600`}
