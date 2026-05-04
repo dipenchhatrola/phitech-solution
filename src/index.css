@@ -69,13 +69,32 @@ body {
     color: transparent !important;
     font-size: 0 !important;
     line-height: 0 !important;
-    overflow: hidden !important;
+    overflow: visible !important;
 }
 .goog-te-gadget > span {
     display: none !important;
 }
 .goog-te-gadget img {
     display: none !important;
+}
+.goog-te-gadget select.goog-te-combo {
+    display: inline-block !important;
+    width: auto !important;
+    min-width: 128px;
+    height: 28px;
+    margin: 0 !important;
+    padding: 3px 8px;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    background: #ffffff;
+    color: #334155 !important;
+    font-size: 12px !important;
+    line-height: 18px !important;
+    outline: none;
+}
+.goog-te-gadget select.goog-te-combo:focus {
+    border-color: #dc2626;
+    box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.12);
 }
 /* Custom Scrollbar */
 .custom-scrollbar::-webkit-scrollbar {

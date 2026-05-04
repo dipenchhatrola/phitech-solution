@@ -9,6 +9,16 @@ const FacebookIcon = FaFacebookF as any;
 const InstagramIcon = FaInstagram as any;
 const TwitterIcon = FaTwitter as any;
 
+const languageOptions = [
+  { value: "", label: "Translate" },
+  { value: "en", label: "English" },
+  { value: "hi", label: "Hindi" },
+  { value: "gu", label: "Gujarati" },
+  { value: "mr", label: "Marathi" },
+  { value: "ta", label: "Tamil" },
+  { value: "te", label: "Telugu" },
+];
+
 export default function Navbar() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -17,10 +27,32 @@ export default function Navbar() {
   const [isDarkSlide, setIsDarkSlide] = useState(false);
   const [activeSection, setActiveSection] = useState("home");
   const [settings, setSettings] = useState<any>({});
+  const [selectedLanguage, setSelectedLanguage] = useState("");
 
   useEffect(() => {
     api.get("/settings").then(res => setSettings(res.data)).catch(console.error);
   }, []);
+
+  const handleLanguageChange = (language: string) => {
+    setSelectedLanguage(language);
+
+    const applyLanguage = () => {
+      const googleSelects = document.querySelectorAll<HTMLSelectElement>(".goog-te-combo");
+      if (!googleSelects.length) return false;
+
+      googleSelects.forEach((select) => {
+        select.value = language;
+        select.dispatchEvent(new Event("change", { bubbles: true }));
+      });
+
+      return true;
+    };
+
+    if (!applyLanguage()) {
+      window.googleTranslateElementInit?.();
+      setTimeout(applyLanguage, 300);
+    }
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -87,23 +119,40 @@ export default function Navbar() {
   };
 
   useEffect(() => {
-    // Add Google Translate Script
-    const addGoogleTranslateScript = () => {
-      if (!window.googleTranslateElementInit) {
-        const script = document.createElement("script");
-        script.src = "//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit";
-        script.async = true;
-        document.body.appendChild(script);
-        window.googleTranslateElementInit = () => {
-          new window.google.translate.TranslateElement(
-            { pageLanguage: 'en' },
-            'google_translate_element'
-          );
-        };
-      }
+    const translateContainers = [
+      "google_translate_element",
+      "google_translate_element_mobile",
+    ];
+
+    const initGoogleTranslate = () => {
+      if (!window.google?.translate?.TranslateElement) return;
+
+      translateContainers.forEach((containerId) => {
+        const container = document.getElementById(containerId);
+        if (!container || container.childElementCount > 0) return;
+
+        new window.google.translate.TranslateElement(
+          { pageLanguage: "en" },
+          containerId
+        );
+      });
     };
-    addGoogleTranslateScript();
-  }, []);
+
+    window.googleTranslateElementInit = initGoogleTranslate;
+
+    if (window.google?.translate?.TranslateElement) {
+      initGoogleTranslate();
+      return;
+    }
+
+    if (!document.getElementById("google-translate-script")) {
+      const script = document.createElement("script");
+      script.id = "google-translate-script";
+      script.src = "https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit";
+      script.async = true;
+      document.body.appendChild(script);
+    }
+  }, [isMenuOpen]);
 
   const isWhiteText = !scrolled && isDarkSlide;
   const isLoggedIn = !!localStorage.getItem("clientToken") || !!localStorage.getItem("adminToken");
@@ -210,16 +259,6 @@ export default function Navbar() {
           {/* Mobile Menu Button */}
           <div className="flex items-center space-x-2 lg:hidden">
             <button
-              onClick={() => navigate(localStorage.getItem("adminToken") ? "/admin/inquiries" : "/login")}
-              className={`p-2 rounded-full border transition-all duration-300 border-slate-200 text-slate-600 hover:bg-slate-50`}
-              title="Inquiries"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-              </svg>
-            </button>
-
-            <button
               onClick={() => navigate(isLoggedIn ? (localStorage.getItem("adminToken") ? "/admin" : "/dashboard") : "/login")}
               className={`p-2 rounded-full border transition-all duration-300 border-slate-200 text-slate-600`}
             >
@@ -244,8 +283,50 @@ export default function Navbar() {
         </div>
 
         {/* Mobile Navigation Dropdown */}
-        <div className={`lg:hidden overflow-hidden transition-all duration-300 ease-in-out ${isMenuOpen ? 'max-h-[500px] opacity-100 mb-4' : 'max-h-0 opacity-0'}`}>
+        <div className={`lg:hidden overflow-hidden transition-all duration-300 ease-in-out ${isMenuOpen ? 'max-h-[760px] opacity-100 mb-4' : 'max-h-0 opacity-0'}`}>
           <div className="py-2 space-y-1 bg-white border border-slate-100 rounded-2xl p-4 shadow-xl">
+            <div className="px-4 pb-3 mb-2 border-b border-slate-100 space-y-3">
+              <div className="grid grid-cols-1 gap-2 text-sm">
+                <a href={`tel:${settings?.mobileNumber || '+91 94287 35418'}`} className="flex items-center space-x-2 text-slate-700 font-semibold">
+                  <PhoneIcon className="text-brand-600 w-3.5 h-3.5" />
+                  <span>{settings?.mobileNumber || '+91 94287 35418'}</span>
+                </a>
+                <a href={`tel:${settings?.contactNumber || '+91 90339 67360'}`} className="flex items-center space-x-2 text-slate-700 font-semibold">
+                  <PhoneIcon className="text-brand-600 w-3.5 h-3.5" />
+                  <span>{settings?.contactNumber || '+91 90339 67360'}</span>
+                </a>
+              </div>
+
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center space-x-2">
+                  <a href={settings?.facebook || '#'} target="_blank" rel="noreferrer" className="w-7 h-7 rounded-full bg-blue-600 text-white flex items-center justify-center">
+                    <FacebookIcon size={12} />
+                  </a>
+                  <a href={settings?.instagram || '#'} target="_blank" rel="noreferrer" className="w-7 h-7 rounded-full bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-600 text-white flex items-center justify-center">
+                    <InstagramIcon size={12} />
+                  </a>
+                  <a href={settings?.twitter || '#'} target="_blank" rel="noreferrer" className="w-7 h-7 rounded-full bg-black text-white flex items-center justify-center">
+                    <TwitterIcon size={12} />
+                  </a>
+                </div>
+
+                <select
+                  value={selectedLanguage}
+                  onChange={(event) => handleLanguageChange(event.target.value)}
+                  className="min-w-[132px] h-8 rounded-md border border-slate-200 bg-white px-2 text-xs font-medium text-slate-700 outline-none focus:border-brand-600 focus:ring-2 focus:ring-brand-600/10"
+                  aria-label="Translate language"
+                >
+                  {languageOptions.map((language) => (
+                    <option key={language.value || "default"} value={language.value}>
+                      {language.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div id="google_translate_element_mobile" className="hidden"></div>
+            </div>
+
             {navLinks.map((link) => (
               <button
                 key={link.id}
@@ -259,10 +340,6 @@ export default function Navbar() {
                 {link.label}
               </button>
             ))}
-            {/* Mobile Google Translate */}
-            <div className="px-4 py-3 border-t border-slate-100 mt-2">
-              <div id="google_translate_element_mobile"></div>
-            </div>
           </div>
         </div>
       </div>
