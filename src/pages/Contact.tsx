@@ -44,8 +44,14 @@ export default function Contact() {
 
    return (
       <section className="py-12 md:py-24 bg-[#f4f6f8] relative overflow-hidden">
-         {/* Very faint map-like dotted background representation */}
-         <div className="absolute top-1/2 right-[10%] -translate-y-1/2 w-[600px] h-[600px] bg-[radial-gradient(#e2e8f0_2px,transparent_2px)] [background-size:16px_16px] opacity-50 z-0 rounded-full" style={{ maskImage: 'radial-gradient(circle, black 40%, transparent 70%)', WebkitMaskImage: 'radial-gradient(circle, black 40%, transparent 70%)' }}></div>
+         {/* World Map Background Image */}
+         <div 
+            className="absolute inset-0 z-0 opacity-50 pointer-events-none bg-no-repeat bg-center"
+            style={{
+               backgroundImage: 'url(/Map-min.png)',
+               backgroundSize: 'contain'
+            }}
+         ></div>
 
          <div className="container-custom relative z-10 max-w-[1100px] mx-auto">
             <div className="flex flex-col lg:flex-row gap-12 lg:gap-8 items-stretch justify-center">
