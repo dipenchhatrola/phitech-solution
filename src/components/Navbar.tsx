@@ -1,13 +1,14 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import api from "../utils/api";
-import { FaPhoneAlt, FaFacebookF, FaInstagram, FaTwitter } from "react-icons/fa";
+import { FaPhoneAlt, FaFacebookF, FaInstagram } from "react-icons/fa";
+import { FaXTwitter } from "react-icons/fa6";
 
 const PhoneIcon = FaPhoneAlt as any;
 const FacebookIcon = FaFacebookF as any;
 const InstagramIcon = FaInstagram as any;
-const TwitterIcon = FaTwitter as any;
+const XIcon = FaXTwitter as any;
 
 const languageOptions = [
   { value: "", label: "Translate" },
@@ -28,6 +29,10 @@ export default function Navbar() {
   const [activeSection, setActiveSection] = useState("home");
   const [settings, setSettings] = useState<any>({});
   const [selectedLanguage, setSelectedLanguage] = useState("");
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [isMobileProfileOpen, setIsMobileProfileOpen] = useState(false);
+  const profileRef = useRef<HTMLDivElement>(null);
+  const mobileProfileRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     api.get("/settings").then(res => setSettings(res.data)).catch(console.error);
@@ -82,6 +87,27 @@ export default function Navbar() {
     window.addEventListener('slideChange', handleSlideChange);
     return () => window.removeEventListener('slideChange', handleSlideChange);
   }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (profileRef.current && !profileRef.current.contains(event.target as Node)) {
+        setIsProfileOpen(false);
+      }
+      if (mobileProfileRef.current && !mobileProfileRef.current.contains(event.target as Node)) {
+        setIsMobileProfileOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("clientToken");
+    localStorage.removeItem("adminToken");
+    setIsProfileOpen(false);
+    setIsMobileProfileOpen(false);
+    navigate("/login");
+  };
 
   const navLinks = [
     { id: "home", label: "Home" },
@@ -155,7 +181,7 @@ export default function Navbar() {
   }, [isMenuOpen]);
 
   const isWhiteText = !scrolled && isDarkSlide;
-  const isLoggedIn = !!localStorage.getItem("clientToken") || !!localStorage.getItem("adminToken");
+  const isLoggedIn = !!localStorage.getItem("clientToken");
 
   return (
     <motion.nav
@@ -203,7 +229,7 @@ export default function Navbar() {
                   <InstagramIcon size={10} />
                 </a>
                 <a href={settings?.twitter || '#'} target="_blank" rel="noreferrer" className="w-5 h-5 rounded-full bg-black text-white flex items-center justify-center hover:bg-gray-800 transition-colors">
-                  <TwitterIcon size={10} />
+                  <XIcon size={10} />
                 </a>
               </div>
 
@@ -236,36 +262,78 @@ export default function Navbar() {
            
 
               {/* Profile Icon */}
-              <button
-                onClick={() => {
-                  if (localStorage.getItem("adminToken")) {
-                    navigate("/admin");
-                  } else if (localStorage.getItem("clientToken")) {
-                    navigate("/dashboard");
-                  } else {
-                    navigate("/login");
-                  }
-                }}
-                className={`ml-3 p-1.5 rounded-full border transition-all duration-300 border-slate-200 text-slate-600 hover:bg-slate-50`}
-                title={isLoggedIn ? "Dashboard" : "Login"}
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                </svg>
-              </button>
+              <div className="relative ml-3" ref={profileRef}>
+                <button
+                  onClick={() => setIsProfileOpen((prev) => !prev)}
+                  className={`p-1.5 rounded-full border transition-all duration-300 border-slate-200 text-slate-600 hover:bg-slate-50`}
+                  title={isLoggedIn ? "Account" : "Login"}
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  </svg>
+                </button>
+
+                {isProfileOpen && (
+                  <div className="absolute right-0 mt-2 w-40 bg-white border border-slate-100 rounded-xl shadow-lg overflow-hidden z-50">
+                    {isLoggedIn ? (
+                      <button
+                        onClick={handleLogout}
+                        className="block w-full text-left px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-brand-600"
+                      >
+                        Logout
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => {
+                          setIsProfileOpen(false);
+                          navigate("/login");
+                        }}
+                        className="block w-full text-left px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-brand-600"
+                      >
+                        Login
+                      </button>
+                    )}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
           {/* Mobile Menu Button */}
           <div className="flex items-center space-x-2 lg:hidden">
-            <button
-              onClick={() => navigate(isLoggedIn ? (localStorage.getItem("adminToken") ? "/admin" : "/dashboard") : "/login")}
-              className={`p-2 rounded-full border transition-all duration-300 border-slate-200 text-slate-600`}
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-              </svg>
-            </button>
+            <div className="relative" ref={mobileProfileRef}>
+              <button
+                onClick={() => setIsMobileProfileOpen((prev) => !prev)}
+                className={`p-2 rounded-full border transition-all duration-300 border-slate-200 text-slate-600`}
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+              </button>
+
+              {isMobileProfileOpen && (
+                <div className="absolute right-0 mt-2 w-40 bg-white border border-slate-100 rounded-xl shadow-lg overflow-hidden z-50">
+                  {isLoggedIn ? (
+                    <button
+                      onClick={handleLogout}
+                      className="block w-full text-left px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-brand-600"
+                    >
+                      Logout
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => {
+                        setIsMobileProfileOpen(false);
+                        navigate("/login");
+                      }}
+                      className="block w-full text-left px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-brand-600"
+                    >
+                      Login
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
 
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -306,7 +374,7 @@ export default function Navbar() {
                     <InstagramIcon size={12} />
                   </a>
                   <a href={settings?.twitter || '#'} target="_blank" rel="noreferrer" className="w-7 h-7 rounded-full bg-black text-white flex items-center justify-center">
-                    <TwitterIcon size={12} />
+                    <XIcon size={12} />
                   </a>
                 </div>
 
